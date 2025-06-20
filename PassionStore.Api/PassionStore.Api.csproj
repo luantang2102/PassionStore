@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>6469707e-b525-40af-b028-5320b22ac446</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="FluentValidation" Version="11.11.0" />
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PassionStore.Application\PassionStore.Application.csproj" />
+    <ProjectReference Include="..\PassionStore.Core\PassionStore.Core.csproj" />
+    <ProjectReference Include="..\PassionStore.Infrastructure\PassionStore.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

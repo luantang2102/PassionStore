@@ -1,0 +1,99 @@
+﻿<div class="search-box bg-dark position-relative">
+    <div class="search-wrap">
+        <div class="close-button">
+            <svg class="close" style="fill: white;">
+                <use xlink:href="#close"></use>
+            </svg>
+        </div>
+        <form id="search-form" class="text-lg-center text-md-left pt-3" action="index.html" method="get">
+            <input type="text" class="search-input" placeholder="Tìm kiếm...">
+            <svg class="search">
+                <use xlink:href="#search"></use>
+            </svg>
+        </form>
+    </div>
+</div>
+
+@await Html.PartialAsync("_Modals")
+
+<header id="header" class="site-header text-black z-3 sticky-top" style="background-color: #c5b4fd">
+    <div class="header-top border-bottom py-2" style="background-color: white">
+        <div class="container-lg">
+            <div class="row justify-content-evenly">
+                <div class="col">
+                    <ul class="social-links list-unstyled d-flex m-0">
+                        <li class="pe-2">
+                            <a href="#">
+                                <svg class="facebook" width="20" height="20">
+                                    <use xlink:href="#facebook"></use>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="pe-2">
+                            <a href="#">
+                                <svg class="instagram" width="20" height="20">
+                                    <use xlink:href="#instagram"></use>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="pe-2">
+                            <a href="#">
+                                <svg class="youtube" width="20" height="20">
+                                    <use xlink:href="#youtube"></use>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col d-none d-md-block">
+                    <p class="text-center text-black m-0" style="white-space: nowrap;">
+                        <strong>Ưu đãi đặc biệt</strong>: Miễn phí vận chuyển cho tất cả đơn hàng trên 1.000.000 đồng
+                    </p>
+                </div>
+                <div class="col">
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav id="header-nav" class="navbar navbar-expand-lg sticky-top">
+        <div class="container-lg">
+            <a class="navbar-brand" href="/">
+                <img class="logo w-50 h-50" src="images/logo.png" alt="logo">
+            </a>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="bdNavbar">
+                <div class="offcanvas-body">
+                    <ul id="navbar" class="navbar-nav fw-bold justify-content-end align-items-center flex-grow-1" style="white-space: nowrap;">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="/">Trang Chủ</a>
+                        </li>
+                        @await Component.InvokeAsync("CategoryMenu")
+                        <li class="nav-item">
+                            <a asp-controller="Products" asp-action="Index" class="nav-link me-5">Sản phẩm mới</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="user-items ps-0 ps-md-5">
+                <ul class="d-flex justify-content-end list-unstyled align-item-center m-0" style="white-space: nowrap;">
+                    <li class="pe-3">
+                        <partial name="_UserPartial" />
+                    </li>
+                    <li class="pe-3">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modallong" class="border-0">
+                            <svg class="shopping-cart" width="24" height="24">
+                                <use xlink:href="#shopping-cart"></use>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="search-item border-0" data-bs-toggle="collapse" data-bs-target="#search-box" aria-label="Chuyển đổi điều hướng">
+                            <svg class="search" width="24" height="24">
+                                <use xlink:href="#search"></use>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

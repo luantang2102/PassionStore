@@ -1,0 +1,18 @@
+﻿@using PassionStore.Web.Models
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error</h1>
+<h2 class="text-danger">@Model.Message</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+<p>Please try again later or contact support if the issue persists.</p>
+<a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return to Home</a>

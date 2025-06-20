@@ -1,0 +1,89 @@
+﻿<footer id="footer" class="py-5 border-top" style="background-color: #c5b4fd;">
+    <div class="container-lg">
+        <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-3 col-md-6 pb-4">
+                <div class="footer-menu">
+                    <h5 class="widget-title pb-3 fw-bold">Về Chúng Tôi</h5>
+                    <ul class="menu-list list-unstyled">
+                        <li class="pb-2">
+                            <a href="@Url.Action("About", "Home")">Giới Thiệu</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("Contact", "Home")">Liên Hệ</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("PrivacyPolicy", "Home")">Chính Sách Bảo Mật</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("Terms", "Home")">Điều Khoản Sử Dụng</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Customer Support -->
+            <div class="col-lg-3 col-md-6 pb-4">
+                <div class="footer-menu">
+                    <h5 class="widget-title pb-3 fw-bold">Hỗ Trợ Khách Hàng</h5>
+                    <ul class="menu-list list-unstyled">
+                        <li class="pb-2">
+                            <a href="@Url.Action("TrackOrder", "Order")">Theo Dõi Đơn Hàng</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("Faq", "Help")">Câu Hỏi Thường Gặp</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("Shipping", "Help")">Thông Tin Vận Chuyển</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("Returns", "Help")">Chính Sách Đổi Trả</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Account & Shop -->
+            <div class="col-lg-3 col-md-6 pb-4">
+                <div class="footer-menu">
+                    <h5 class="widget-title pb-3 fw-bold">Tài Khoản & Mua Sắm</h5>
+                    <ul class="menu-list list-unstyled">
+                        <li class="pb-2">
+                            <a href="@Url.Action("Index", "Product")">Cửa Hàng</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modallogin">Đăng Nhập</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modallong">Giỏ Hàng</a>
+                        </li>
+                        <li class="pb-2">
+                            <a href="@Url.Action("BestSellers", "Product")">Sản Phẩm Bán Chạy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6 pb-4">
+                <div class="footer-menu">
+                    <h5 class="widget-title pb-3 fw-bold">Liên Hệ</h5>
+                    <div class="footer-contact-text">
+                        <span>123 Đường Chính, Quận 1, TP. Hồ Chí Minh, Việt Nam</span><br>
+                        <span>Gọi chúng tôi: (+84) 123 456 789</span><br>
+                        <span class="text-hover fw-bold light-border">
+                            <a href="mailto:contact@ecommercenashapp.com">contact@ecommercenashapp.com</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright & Credits -->
+        <div class="row border-top pt-4">
+            <div class="col-md-6">
+                <p>&copy; @DateTime.Now.Year Ecommerce NashApp. Mọi quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,9 @@
+﻿
+@using PassionStore.Web.Models.Views
+ 
+@model IEnumerable<CategoryView>  
+
+@foreach (var category in Model)  
+{  
+   @await Html.PartialAsync("_CategoryMenu", category)  
+}

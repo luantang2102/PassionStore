@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "PassionStore.Api\\PassionStore.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PassionStore.Web\\PassionStore.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
