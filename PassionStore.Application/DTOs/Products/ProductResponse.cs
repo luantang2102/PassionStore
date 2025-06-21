@@ -17,6 +17,7 @@ namespace PassionStore.Application.DTOs.Products
         public bool IsFeatured { get; set; } = false;
         public bool IsSale { get; set; } = false;
         public bool IsNew { get; set; } = false;
+        public bool IsNotHadVariants { get; set; } = false;
         public int TotalReviews { get; set; } = 0;
         public int DiscountPercentage { get; set; } = 0;
         public List<ProductImageResponse> ProductImages { get; set; } = [];
@@ -26,4 +27,5 @@ namespace PassionStore.Application.DTOs.Products
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
     }
+
 }

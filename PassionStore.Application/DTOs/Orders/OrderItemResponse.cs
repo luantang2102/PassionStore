@@ -15,7 +15,6 @@ namespace PassionStore.Application.DTOs.Orders
 
         // Product Variant
         public Guid ProductVariantId { get; set; }
-        public List<ProductVariantImageResponse> Images { get; set; } = [];
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public required ColorResponse Color { get; set; }

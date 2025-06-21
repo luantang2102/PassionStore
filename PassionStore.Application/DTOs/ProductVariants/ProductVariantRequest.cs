@@ -9,7 +9,5 @@ namespace PassionStore.Application.DTOs.ProductVariants
         public Guid ProductId { get; set; }
         public Guid ColorId { get; set; }
         public Guid SizeId { get; set; }
-        public List<ExistingProductVariantImageRequest>? Images { get; set; }
-        public List<IFormFile>? FormImages { get; set; }
     }
 }

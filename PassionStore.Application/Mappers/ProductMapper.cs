@@ -3,7 +3,6 @@ using PassionStore.Application.DTOs.ProductVariants;
 using PassionStore.Core.Entities;
 using PassionStore.Core.Models;
 
-
 namespace PassionStore.Application.Mappers
 {
     public static class ProductMapper
@@ -22,7 +21,7 @@ namespace PassionStore.Application.Mappers
                 InStock = product.InStock,
                 AverageRating = averageRating,
                 IsFeatured = product.IsFeatured,
-                ProductImages = product.ProductImages.Select(pi => pi.MapModelToResponse()).ToList(),
+                ProductImages = product.ProductImages.Select(pi => pi.MapModelToResponse()).OrderBy(pi => pi.Order).ToList(),
                 Categories = product.Categories.Select(c => c.MapModelToResponse()).ToList(),
                 ProductVariants = product.ProductVariants.Select(pv => pv.MapModelToResponse()).ToList(),
                 Brand = product.Brand.MapModelToResponse(),
@@ -31,6 +30,7 @@ namespace PassionStore.Application.Mappers
                 MaxPrice = maxPrice,
                 MinPrice = minPrice,
                 StockQuantity = stockQuantity,
+                IsNotHadVariants = product.IsNotHadVariants,
                 //IsSale = product.IsSale,
                 //IsNew = product.IsNew,
                 TotalReviews = product.Ratings.Count,
@@ -45,7 +45,7 @@ namespace PassionStore.Application.Mappers
                 Id = productImage.Id,
                 ImageUrl = productImage.ImageUrl,
                 PublicId = productImage.PublicId,
-                IsMain = productImage.IsMain,
+                Order = productImage.Order,
                 CreatedDate = productImage.CreatedDate
             };
         }
@@ -62,24 +62,9 @@ namespace PassionStore.Application.Mappers
                 StockQuantity = productVariant.StockQuantity,
                 Color = color,
                 Size = size,
-                Images = productVariant.ProductVariantImages.Select(pvi => pvi.MapModelToResponse()).ToList(),
                 CreatedDate = productVariant.CreatedDate,
                 UpdatedDate = productVariant.UpdatedDate
             };
         }
-
-        public static ProductVariantImageResponse MapModelToResponse(this ProductVariantImage productVariantImage)
-        {
-            return new ProductVariantImageResponse
-            {
-                Id = productVariantImage.Id,
-                ImageUrl = productVariantImage.ImageUrl,
-                PublicId = productVariantImage.PublicId,
-                IsMain = productVariantImage.IsMain,
-                CreatedDate = productVariantImage.CreatedDate
-            };
-        }
-
-
     }
 }

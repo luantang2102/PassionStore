@@ -25,7 +25,9 @@ namespace PassionStore.Infrastructure.Data.Configuration
                    .WithMany(s => s.ProductVariants)
                    .HasForeignKey(p => p.SizeId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(p => new { p.ProductId, p.ColorId, p.SizeId })
+                   .IsUnique();
         }
     }
-
 }

@@ -23,7 +23,6 @@ namespace PassionStore.Infrastructure.Repositories
                 .Include(x => x.Product)
                 .Include(x => x.Color)
                 .Include(x => x.Size)
-                .Include(x => x.ProductVariantImages)
                 .FirstOrDefaultAsync(x => x.Id == productVariantId);
         }
 
@@ -32,8 +31,7 @@ namespace PassionStore.Infrastructure.Repositories
             return _context.ProductVariants
                 .Include(x => x.Product)
                 .Include(x => x.Color)
-                .Include(x => x.Size)
-                .Include(x => x.ProductVariantImages);
+                .Include(x => x.Size);
         }
 
         public async Task<Product?> GetProductByIdAsync(Guid productId)
@@ -54,10 +52,20 @@ namespace PassionStore.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == sizeId);
         }
 
+        public async Task<List<ProductVariant>> GetByProductIdAsync(Guid productId)
+        {
+            return await _context.ProductVariants
+                .Include(x => x.Color)
+                .Include(x => x.Size)
+                .Where(x => x.ProductId == productId)
+                .ToListAsync();
+        }
+
         public async Task<ProductVariant?> GetWithImagesAsync(Guid productVariantId)
         {
             return await _context.ProductVariants
-                .Include(x => x.ProductVariantImages)
+                .Include(x => x.Product)
+                .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == productVariantId);
         }
 
@@ -75,7 +83,6 @@ namespace PassionStore.Infrastructure.Repositories
 
         public async Task DeleteAsync(ProductVariant productVariant)
         {
-            _context.ProductVariantImages.RemoveRange(productVariant.ProductVariantImages);
             _context.ProductVariants.Remove(productVariant);
             await Task.CompletedTask;
         }
@@ -94,6 +101,12 @@ namespace PassionStore.Infrastructure.Repositories
         public async Task<bool> HasSizeAsync(Guid sizeId)
         {
             return await _context.ProductVariants.AnyAsync(x => x.SizeId == sizeId);
+        }
+
+        public async Task<bool> ExistsAsync(Guid productId, Guid colorId, Guid sizeId)
+        {
+            return await _context.ProductVariants
+                .AnyAsync(x => x.ProductId == productId && x.ColorId == colorId && x.SizeId == sizeId);
         }
     }
 }

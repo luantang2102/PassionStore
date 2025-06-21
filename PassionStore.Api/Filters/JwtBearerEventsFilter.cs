@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using PassionStore.Core.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace PassionStore.Api.Filters
 {
@@ -18,14 +19,40 @@ namespace PassionStore.Api.Filters
                     }
                     return Task.CompletedTask;
                 },
-                OnChallenge = context =>
+                OnChallenge = async context =>
                 {
+                    // Prevent the default challenge response (e.g., redirect to login)
                     context.HandleResponse();
-                    throw new AccessDeniedException(ErrorCode.UNAUTHORIZED_ACCESS);
+
+                    // Set the response status code and content
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    // Create the error response
+                    var errorResponse = new
+                    {
+                        Code = ErrorCode.UNAUTHORIZED_ACCESS.GetCode(),
+                        Message = ErrorCode.UNAUTHORIZED_ACCESS.GetMessage()
+                    };
+
+                    // Write the response
+                    await context.Response.WriteAsJsonAsync(errorResponse);
                 },
-                OnForbidden = context =>
+                OnForbidden = async context =>
                 {
-                    throw new AccessDeniedException(ErrorCode.ACCESS_DENIED);
+                    // Set the response status code and content for forbidden
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+
+                    // Create the error response
+                    var errorResponse = new
+                    {
+                        Code = ErrorCode.ACCESS_DENIED.GetCode(),
+                        Message = ErrorCode.ACCESS_DENIED.GetMessage()
+                    };
+
+                    // Write the response
+                    await context.Response.WriteAsJsonAsync(errorResponse);
                 }
             };
         }

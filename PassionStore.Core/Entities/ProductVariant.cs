@@ -17,7 +17,6 @@ namespace PassionStore.Core.Models
         public virtual Product Product { get; set; } = null!;
         public virtual Color Color { get; set; } = null!;
         public virtual Size Size { get; set; } = null!;
-        public virtual ICollection<ProductVariantImage> ProductVariantImages { get; set; } = [];
         public virtual ICollection<CartItem> CartItems { get; set; } = [];
         public virtual ICollection<OrderItem> OrderItems { get; set; } = [];
     }

@@ -22,11 +22,11 @@ namespace PassionStore.Application.Mappers
                 Id = cartItem.Id,
                 ProductId = cartItem.ProductVariant.Product.Id,
                 ProductVariantId = cartItem.ProductVariant.Id,
+                ProductImage = cartItem.ProductVariant.Product.ProductImages?.FirstOrDefault()?.ImageUrl ?? string.Empty,
                 ProductName = cartItem.ProductVariant.Product.Name,
                 ProductDescription = cartItem.ProductVariant.Product.Description,
                 Quantity = cartItem.Quantity,
                 Price = cartItem.Price,
-                Images = cartItem.ProductVariant.ProductVariantImages.Select(x => x.MapModelToResponse()).ToList(),
                 Color = cartItem.ProductVariant.Color.MapModelToResponse(),
                 Size = cartItem.ProductVariant.Size.MapModelToResponse()
             };

@@ -7,7 +7,7 @@ namespace PassionStore.Core.Models
     {
         public required string ImageUrl { get; set; }
         public required string PublicId { get; set; }
-        public bool IsMain { get; set; }
+        public int Order { get; set; }
 
         // Foreign key
         public Guid ProductId { get; set; }

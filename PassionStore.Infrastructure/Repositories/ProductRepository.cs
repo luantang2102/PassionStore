@@ -27,8 +27,6 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.Color)
                 .Include(x => x.ProductVariants)
                 .ThenInclude(x => x.Size)
-                .Include(x => x.ProductVariants)
-                .ThenInclude(x => x.ProductVariantImages)
                 .FirstOrDefaultAsync(x => x.Id == productId);
         }
 
@@ -42,9 +40,7 @@ namespace PassionStore.Infrastructure.Repositories
                 .Include(x => x.ProductVariants)
                 .ThenInclude(x => x.Color)
                 .Include(x => x.ProductVariants)
-                .ThenInclude(x => x.Size)
-                .Include(x => x.ProductVariants)
-                .ThenInclude(x => x.ProductVariantImages);
+                .ThenInclude(x => x.Size);
         }
 
         public IQueryable<Product> GetByCategoryIdAsync(Guid categoryId)
@@ -58,8 +54,6 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.Color)
                 .Include(x => x.ProductVariants)
                 .ThenInclude(x => x.Size)
-                .Include(x => x.ProductVariants)
-                .ThenInclude(x => x.ProductVariantImages)
                 .Where(x => x.Categories.Any(c => c.Id == categoryId));
         }
 

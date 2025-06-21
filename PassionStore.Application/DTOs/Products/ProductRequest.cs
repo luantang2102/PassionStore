@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using PassionStore.Application.DTOs.ProductVariants;
 
 namespace PassionStore.Application.DTOs.Products
 {
@@ -13,5 +12,11 @@ namespace PassionStore.Application.DTOs.Products
         public List<IFormFile> FormImages { get; set; } = [];
         public List<Guid> CategoryIds { get; set; } = [];
         public Guid BrandId { get; set; } = Guid.Empty;
+
+        // Default variant properties
+        public bool IsNotHadVariants { get; set; } = false;
+        public decimal DefaultVariantPrice { get; set; } 
+        public int DefaultVariantStockQuantity { get; set; } 
     }
+
 }

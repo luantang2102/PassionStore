@@ -45,7 +45,6 @@ namespace PassionStore.Application.Mappers
                 Size = orderItem.ProductVariant!.Size.MapModelToResponse(),
                 ProductId = orderItem.ProductVariant.ProductId,
                 ProductDescription = orderItem.ProductVariant.Product?.Description ?? string.Empty,
-                Images = orderItem.ProductVariant.ProductVariantImages.Select(img => img.MapModelToResponse()).ToList()
             };
         }
     }

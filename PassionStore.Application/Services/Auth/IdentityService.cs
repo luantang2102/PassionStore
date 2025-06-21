@@ -87,13 +87,14 @@ namespace PassionStore.Application.Services.Auth
                 {
                     Code = verificationCode,
                     UserId = user.Id,
-                    ExpiryTime = DateTime.UtcNow.AddMinutes(15),
+                    ExpiryTime = DateTime.UtcNow.AddMinutes(5),
                     IsVerified = false
                 };
                 await _verifyCodeRepository.CreateAsync(verifyCode);
+                await _unitOfWork.CommitAsync();
+
                 var emailBody = GetVerificationEmailHtml(verificationCode);
                 await _emailService.SendEmailAsync(user.Email!, "Verify Your Email", plainText: null, htmlContent: emailBody);
-                await _unitOfWork.CommitAsync();
 
                 throw new AppException(ErrorCode.EMAIL_NOT_VERIFIED, new Dictionary<string, object>
                 {
@@ -176,15 +177,15 @@ namespace PassionStore.Application.Services.Auth
             {
                 Code = verificationCode,
                 UserId = user.Id,
-                ExpiryTime = DateTime.UtcNow.AddMinutes(15),
+                ExpiryTime = DateTime.UtcNow.AddMinutes(5),
                 IsVerified = false
             };
             await _verifyCodeRepository.CreateAsync(verifyCode);
+            await _unitOfWork.CommitAsync();
 
             var emailBody = GetVerificationEmailHtml(verificationCode);
             await _emailService.SendEmailAsync(user.Email!, "Verify Your Email", plainText: null, htmlContent: emailBody);
 
-            await _unitOfWork.CommitAsync();
 
             return user.MapModelToResponse();
         }
@@ -270,7 +271,7 @@ namespace PassionStore.Application.Services.Auth
             {
                 Code = verificationCode,
                 UserId = user.Id,
-                ExpiryTime = DateTime.UtcNow.AddMinutes(15),
+                ExpiryTime = DateTime.UtcNow.AddMinutes(5),
                 IsVerified = false
             };
             await _verifyCodeRepository.CreateAsync(verifyCode);

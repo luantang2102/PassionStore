@@ -1,4 +1,5 @@
-﻿using PassionStore.Core.Interfaces.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Data;
 
@@ -13,29 +14,49 @@ namespace PassionStore.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<CartItem> CreateAsync(CartItem cartItem)
+        public async Task<CartItem> CreateAsync(CartItem cartItem)
         {
-            throw new NotImplementedException();
+            await _context.CartItems.AddAsync(cartItem);
+            return cartItem;
         }
 
-        public Task DeleteAsync(CartItem cartItem)
+        public async Task DeleteAsync(CartItem cartItem)
         {
-            throw new NotImplementedException();
+            _context.CartItems.Remove(cartItem);
+            await Task.CompletedTask;
         }
 
         public IQueryable<CartItem> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return _context.CartItems
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.ProductImages)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Size)
+                .Include(x => x.Cart);
         }
 
-        public Task<CartItem?> GetByIdAsync(Guid cartItemId)
+        public async Task<CartItem?> GetByIdAsync(Guid cartItemId)
         {
-            throw new NotImplementedException();
+            return await _context.CartItems
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.ProductImages)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Size)
+                .Include(x => x.Cart)
+                .FirstOrDefaultAsync(x => x.Id == cartItemId);
         }
 
-        public Task UpdateAsync(CartItem cartItem)
+        public async Task UpdateAsync(CartItem cartItem)
         {
-            throw new NotImplementedException();
+            _context.CartItems.Update(cartItem);
+            await Task.CompletedTask;
         }
     }
 }

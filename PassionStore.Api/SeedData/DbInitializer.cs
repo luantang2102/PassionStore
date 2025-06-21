@@ -37,7 +37,6 @@ namespace PassionStore.Api.SeedData
             await SeedSizes(dbContext);
             await SeedProducts(dbContext);
             await SeedProductVariants(dbContext);
-            await SeedProductVariantImages(dbContext);
             await SeedOrderItems(dbContext);
             await SeedCartItems(dbContext);
             await SeedVerifyCodes(dbContext, userManager);
@@ -238,7 +237,7 @@ namespace PassionStore.Api.SeedData
 
         private static async Task SeedColors(AppDbContext context)
         {
-            if (!context.Colors.Any())
+            if (!await context.Colors.AnyAsync())
             {
                 var colors = new List<Color>
                 {
@@ -249,11 +248,22 @@ namespace PassionStore.Api.SeedData
                 await context.Colors.AddRangeAsync(colors);
                 await context.SaveChangesAsync();
             }
+            if (await context.Colors.FirstOrDefaultAsync(x => x.Id == Guid.Parse("4c3d578a-1a50-4c18-be4e-2bf05f2ca456")) == null)
+            {
+                var noneColor = new Color
+                {
+                    Id = Guid.Parse("4c3d578a-1a50-4c18-be4e-2bf05f2ca456"),
+                    Name = "None",
+                    HexCode = "None"
+                };
+                await context.Colors.AddAsync(noneColor);
+                await context.SaveChangesAsync();
+            }
         }
 
         private static async Task SeedSizes(AppDbContext context)
         {
-            if (!context.Sizes.Any())
+            if (!await context.Sizes.AnyAsync())
             {
                 var sizes = new List<Size>
                 {
@@ -262,6 +272,16 @@ namespace PassionStore.Api.SeedData
                 };
 
                 await context.Sizes.AddRangeAsync(sizes);
+                await context.SaveChangesAsync();
+            }
+            if (await context.Sizes.FirstOrDefaultAsync(x => x.Id == Guid.Parse("c34710ac-d87f-479c-9528-4e21ae9331d5")) == null)
+            {
+                var noneSize = new Size
+                {
+                    Id = Guid.Parse("c34710ac-d87f-479c-9528-4e21ae9331d5"),
+                    Name = "None"
+                };
+                await context.Sizes.AddAsync(noneSize);
                 await context.SaveChangesAsync();
             }
         }
@@ -288,13 +308,11 @@ namespace PassionStore.Api.SeedData
                         {
                             ImageUrl = "https://down-vn.img.susercontent.com/file/850dbf89d966ffcd43feb9ea148f6634@resize_w900_nl.webp",
                             PublicId = "sample1",
-                            IsMain = true
                         },
                         new ProductImage
                         {
                             ImageUrl = "https://down-vn.img.susercontent.com/file/3251977c3cd7ad7dc3b076c88610df27.webp",
                             PublicId = "sample2",
-                            IsMain = false
                         }
                     }
                 };
@@ -312,19 +330,16 @@ namespace PassionStore.Api.SeedData
                         {
                             ImageUrl = "https://down-vn.img.susercontent.com/file/be401154665999f78c2b8a177300284d.webp",
                             PublicId = "sample3",
-                            IsMain = true
                         },
                         new ProductImage
                         {
                             ImageUrl = "https://down-vn.img.susercontent.com/file/55c1f54f43b0416b5530bb230b55976c.webp",
                             PublicId = "sample4",
-                            IsMain = false
                         },
                         new ProductImage
                         {
                             ImageUrl = "https://down-vn.img.susercontent.com/file/f78263b4c5fbd8a97b7f44db7b24cd06.webp",
                             PublicId = "sample5",
-                            IsMain = false
                         }
                     }
                 };
@@ -367,35 +382,7 @@ namespace PassionStore.Api.SeedData
             }
         }
 
-        private static async Task SeedProductVariantImages(AppDbContext context)
-        {
-            if (!context.ProductVariantImages.Any())
-            {
-                var productVariants = await context.ProductVariants.ToListAsync();
-
-                var productVariantImages = new List<ProductVariantImage>
-                {
-                    new ProductVariantImage
-                    {
-                        ImageUrl = "https://example.com/variant1.jpg",
-                        PublicId = "variant1",
-                        IsMain = true,
-                        ProductVariantId = productVariants[0].Id
-                    },
-                    new ProductVariantImage
-                    {
-                        ImageUrl = "https://example.com/variant2.jpg",
-                        PublicId = "variant2",
-                        IsMain = false,
-                        ProductVariantId = productVariants[1].Id
-                    }
-                };
-
-                await context.ProductVariantImages.AddRangeAsync(productVariantImages);
-                await context.SaveChangesAsync();
-            }
-        }
-
+      
         private static async Task SeedOrderItems(AppDbContext context)
         {
             if (!context.OrderItems.Any())

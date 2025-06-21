@@ -12,6 +12,8 @@ namespace PassionStore.Core.Entities
         public bool InStock { get; set; } = true;
         public double AverageRating { get; set; } = 0.0;
         public bool IsFeatured { get; set; } = false;
+        public bool IsSale { get; set; } = false;
+        public bool IsNotHadVariants { get; set; } = false;
 
         // Foreign key
         public Guid BrandId { get; set; }

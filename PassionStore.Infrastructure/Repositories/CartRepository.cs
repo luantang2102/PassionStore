@@ -29,8 +29,7 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.ProductVariant)
                 .ThenInclude(x => x.Size)
                 .Include(x => x.CartItems)
-                .ThenInclude(x => x.ProductVariant)
-                .ThenInclude(x => x.ProductVariantImages);
+                .ThenInclude(x => x.ProductVariant);
         }
 
         public async Task<Cart?> GetByIdAsync(Guid cartId)
@@ -48,7 +47,6 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.Size)
                 .Include(x => x.CartItems)
                 .ThenInclude(x => x.ProductVariant)
-                .ThenInclude(x => x.ProductVariantImages)
                 .FirstOrDefaultAsync(x => x.Id == cartId);
         }
 
@@ -67,7 +65,6 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.Size)
                 .Include(x => x.CartItems)
                 .ThenInclude(x => x.ProductVariant)
-                .ThenInclude(x => x.ProductVariantImages)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
         }
 

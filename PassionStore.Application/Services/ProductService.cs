@@ -9,28 +9,35 @@ using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Extensions;
 using PassionStore.Infrastructure.Externals;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using PassionStore.Core.Entities.Constants;
 
 namespace PassionStore.Application.Services
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductVariantRepository _productVariantRepository;
         private readonly ICartRepository _cartRepository;
         private readonly IBrandRepository _brandRepository;
-        private readonly CloudinaryService cloudinaryService;
+        private readonly CloudinaryService _cloudinaryService;
         private readonly IUnitOfWork _unitOfWork;
 
         public ProductService(
             IProductRepository productRepository,
+            IProductVariantRepository productVariantRepository,
             ICartRepository cartRepository,
             IBrandRepository brandRepository,
             CloudinaryService cloudinaryService,
             IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
+            _productVariantRepository = productVariantRepository;
             _cartRepository = cartRepository;
             _brandRepository = brandRepository;
-            this.cloudinaryService = cloudinaryService;
+            _cloudinaryService = cloudinaryService;
             _unitOfWork = unitOfWork;
         }
 
@@ -39,10 +46,7 @@ namespace PassionStore.Application.Services
             var product = await _productRepository.GetByIdAsync(productId);
             if (product == null)
             {
-                var attributes = new Dictionary<string, object>
-                        {
-                            { "productId", productId }
-                        };
+                var attributes = new Dictionary<string, object> { { "productId", productId } };
                 throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
             }
 
@@ -52,9 +56,9 @@ namespace PassionStore.Application.Services
         public Task<PagedList<ProductResponse>> GetProductsAsync(ProductParams productParams)
         {
             var query = _productRepository.GetAllAsync()
-                    .Sort(productParams.OrderBy)
-                    .Search(productParams.SearchTerm)
-                    .Filter(productParams.Categories, productParams.Ratings, productParams.MinPrice, productParams.MaxPrice, productParams.IsFeatured);
+                .Sort(productParams.OrderBy)
+                .Search(productParams.SearchTerm)
+                .Filter(productParams.Categories, productParams.Ratings, productParams.MinPrice, productParams.MaxPrice, productParams.IsFeatured);
 
             var projectedQuery = query.Select(x => x.MapModelToResponse());
 
@@ -64,7 +68,6 @@ namespace PassionStore.Application.Services
                 productParams.PageSize
             );
         }
-
 
         public async Task<PagedList<ProductResponse>> GetProductsByCategoryIdAsync(Guid categoryId, ProductParams productParams)
         {
@@ -90,18 +93,15 @@ namespace PassionStore.Application.Services
                 Description = productRequest.Description,
                 InStock = productRequest.InStock,
                 IsFeatured = productRequest.IsFeatured,
-                ProductImages = [],
+                IsNotHadVariants = productRequest.IsNotHadVariants
             };
-            
-            if(productRequest.BrandId != Guid.Empty)
+
+            if (productRequest.BrandId != Guid.Empty)
             {
                 var brand = await _brandRepository.GetByIdAsync(productRequest.BrandId);
                 if (brand == null)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "brandId", productRequest.BrandId }
-                        };
+                    var attributes = new Dictionary<string, object> { { "brandId", productRequest.BrandId } };
                     throw new AppException(ErrorCode.BRAND_NOT_FOUND, attributes);
                 }
                 product.Brand = brand;
@@ -112,10 +112,7 @@ namespace PassionStore.Application.Services
                 var categories = await _productRepository.GetCategoriesByIdsAsync(productRequest.CategoryIds);
                 if (categories.Count != productRequest.CategoryIds.Count)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "categoryIds", productRequest.CategoryIds }
-                        };
+                    var attributes = new Dictionary<string, object> { { "categoryIds", productRequest.CategoryIds } };
                     throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, attributes);
                 }
                 product.Categories = categories;
@@ -123,23 +120,37 @@ namespace PassionStore.Application.Services
 
             if (productRequest.FormImages.Count > 0)
             {
-                foreach (var image in productRequest.FormImages)
+                for (int i = 0; i < productRequest.FormImages.Count; i++)
                 {
-                    var uploadResult = await cloudinaryService.AddImageAsync(image);
+                    var image = productRequest.FormImages[i];
+                    var uploadResult = await _cloudinaryService.AddImageAsync(image);
                     var productImage = new ProductImage
                     {
                         PublicId = uploadResult.PublicId,
                         ImageUrl = uploadResult.SecureUrl.AbsoluteUri,
+                        Order = i,
                         Product = product
                     };
                     product.ProductImages.Add(productImage);
                 }
             }
 
+            if (productRequest.IsNotHadVariants)
+            {
+                var defaultVariant = new ProductVariant
+                {
+                    Price = productRequest.DefaultVariantPrice,
+                    StockQuantity = productRequest.DefaultVariantStockQuantity,
+                    Product = product,
+                    ColorId = Constants.NoneColorId,
+                    SizeId = Constants.NoneSizeId
+                };
+                product.ProductVariants.Add(defaultVariant);
+            }
+            // Else, variants will be created via ProductVariantService separately
+
             var createdProduct = await _productRepository.CreateAsync(product);
-
             await _unitOfWork.CommitAsync();
-
             return createdProduct.MapModelToResponse();
         }
 
@@ -148,10 +159,7 @@ namespace PassionStore.Application.Services
             var product = await _productRepository.GetWithImagesAsync(productId);
             if (product == null)
             {
-                var attributes = new Dictionary<string, object>
-                    {
-                        { "productId", productId }
-                    };
+                var attributes = new Dictionary<string, object> { { "productId", productId } };
                 throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
             }
 
@@ -160,16 +168,14 @@ namespace PassionStore.Application.Services
             product.InStock = productRequest.InStock;
             product.IsFeatured = productRequest.IsFeatured;
             product.UpdatedDate = DateTime.UtcNow;
+            product.IsNotHadVariants = productRequest.IsNotHadVariants;
 
             if (productRequest.BrandId != Guid.Empty)
             {
                 var brand = await _brandRepository.GetByIdAsync(productRequest.BrandId);
                 if (brand == null)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "brandId", productRequest.BrandId }
-                        };
+                    var attributes = new Dictionary<string, object> { { "brandId", productRequest.BrandId } };
                     throw new AppException(ErrorCode.BRAND_NOT_FOUND, attributes);
                 }
                 product.Brand = brand;
@@ -182,8 +188,34 @@ namespace PassionStore.Application.Services
             {
                 if (!requestImageIds.Contains(image.Id))
                 {
-                    await cloudinaryService.DeleteImageAsync(image.PublicId);
+                    await _cloudinaryService.DeleteImageAsync(image.PublicId);
                     product.ProductImages.Remove(image);
+                }
+            }
+
+            for (int i = 0; i < productRequest.Images.Count; i++)
+            {
+                var match = product.ProductImages.FirstOrDefault(img => img.Id == productRequest.Images[i].Id);
+                if (match != null)
+                {
+                    match.Order = i;
+                }
+            }
+
+            int nextOrder = product.ProductImages.Any() ? product.ProductImages.Max(img => img.Order) + 1 : 0;
+            if (productRequest.FormImages?.Count > 0)
+            {
+                foreach (var image in productRequest.FormImages)
+                {
+                    var uploadResult = await _cloudinaryService.AddImageAsync(image);
+                    var productImage = new ProductImage
+                    {
+                        PublicId = uploadResult.PublicId,
+                        ImageUrl = uploadResult.SecureUrl.AbsoluteUri,
+                        Order = nextOrder++,
+                        Product = product
+                    };
+                    product.ProductImages.Add(productImage);
                 }
             }
 
@@ -192,20 +224,14 @@ namespace PassionStore.Application.Services
                 var categories = await _productRepository.GetCategoriesByIdsAsync(productRequest.CategoryIds);
                 if (categories.Count != productRequest.CategoryIds.Count)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "categoryIds", productRequest.CategoryIds }
-                        };
+                    var attributes = new Dictionary<string, object> { { "categoryIds", productRequest.CategoryIds } };
                     throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, attributes);
                 }
 
                 var productWithCategories = await _productRepository.GetWithCategoriesAsync(productId);
                 if (productWithCategories == null)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "productId", productId }
-                        };
+                    var attributes = new Dictionary<string, object> { { "productId", productId } };
                     throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
                 }
 
@@ -221,45 +247,60 @@ namespace PassionStore.Application.Services
                 var productWithCategories = await _productRepository.GetWithCategoriesAsync(productId);
                 if (productWithCategories == null)
                 {
-                    var attributes = new Dictionary<string, object>
-                        {
-                            { "productId", productId }
-                        };
+                    var attributes = new Dictionary<string, object> { { "productId", productId } };
                     throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
                 }
                 productWithCategories.Categories.Clear();
                 product.Categories = productWithCategories.Categories;
             }
 
-            foreach (var existing in product.ProductImages)
+            var variants = await _productVariantRepository.GetByProductIdAsync(productId);
+            if (productRequest.IsNotHadVariants)
             {
-                var match = productRequest.Images.FirstOrDefault(i => i.Id == existing.Id);
-                if (match != null)
+                var defaultVariant = variants.FirstOrDefault(v => v.ColorId == Constants.NoneColorId && v.SizeId == Constants.NoneSizeId);
+                if (defaultVariant == null)
                 {
-                    existing.IsMain = match.IsMain;
+                    defaultVariant = new ProductVariant
+                    {
+                        Price = productRequest.DefaultVariantPrice,
+                        StockQuantity = productRequest.DefaultVariantStockQuantity,
+                        ProductId = productId,
+                        ColorId = Constants.NoneColorId,
+                        SizeId = Constants.NoneSizeId
+                    };
+                    await _productVariantRepository.CreateAsync(defaultVariant);
+                }
+                else
+                {
+                    defaultVariant.Price = productRequest.DefaultVariantPrice;
+                    defaultVariant.StockQuantity = productRequest.DefaultVariantStockQuantity;
+                    defaultVariant.UpdatedDate = DateTime.UtcNow;
+                    await _productVariantRepository.UpdateAsync(defaultVariant);
+                }
+
+                foreach (var variant in variants.Where(v => v.ColorId != Constants.NoneColorId || v.SizeId != Constants.NoneSizeId))
+                {
+                    if (await _productVariantRepository.HasProductVariantAsync(variant.Id))
+                    {
+                        var attributes = new Dictionary<string, object> { { "productVariantId", variant.Id } };
+                        throw new AppException(ErrorCode.PRODUCT_VARIANT_IN_CART, attributes);
+                    }
+                    await _productVariantRepository.DeleteAsync(variant);
                 }
             }
-
-            if (productRequest.FormImages?.Count > 0)
+            else
             {
-                foreach (var image in productRequest.FormImages)
+                foreach (var variant in variants)
                 {
-                    var uploadResult = await cloudinaryService.AddImageAsync(image);
-                    var productImage = new ProductImage
+                    if (variant.ColorId == Constants.NoneColorId && variant.SizeId == Constants.NoneSizeId)
                     {
-                        PublicId = uploadResult.PublicId,
-                        ImageUrl = uploadResult.SecureUrl.AbsoluteUri,
-                        IsMain = false,
-                        Product = product
-                    };
-                    product.ProductImages.Add(productImage);
+                        await _productVariantRepository.DeleteAsync(variant);
+                    }
                 }
             }
 
             await _productRepository.UpdateAsync(product);
-
             await _unitOfWork.CommitAsync();
-
             return product.MapModelToResponse();
         }
 
@@ -268,34 +309,27 @@ namespace PassionStore.Application.Services
             var product = await _productRepository.GetWithImagesAsync(productId);
             if (product == null)
             {
-                var attributes = new Dictionary<string, object>
-                    {
-                        { "productId", productId }
-                    };
+                var attributes = new Dictionary<string, object> { { "productId", productId } };
                 throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
             }
 
-            // Check if the product exists in any cart using the repository
-            if (await _cartRepository.HasProductAsync(productId))
+            var variants = await _productVariantRepository.GetByProductIdAsync(productId);
+            foreach (var variant in variants)
             {
-                var attributes = new Dictionary<string, object>
-                    {
-                        { "productId", productId }
-                    };
-                throw new AppException(ErrorCode.PRODUCT_IN_CART, attributes);
+                if (await _productVariantRepository.HasProductVariantAsync(variant.Id))
+                {
+                    var attributes = new Dictionary<string, object> { { "productVariantId", variant.Id } };
+                    throw new AppException(ErrorCode.PRODUCT_VARIANT_IN_CART, attributes);
+                }
             }
 
-            // Delete associated images
             foreach (var image in product.ProductImages)
             {
-                await cloudinaryService.DeleteImageAsync(image.PublicId);
+                await _cloudinaryService.DeleteImageAsync(image.PublicId);
             }
 
-            // Delete the product
             await _productRepository.DeleteAsync(product);
-
             await _unitOfWork.CommitAsync();
         }
-
     }
 }

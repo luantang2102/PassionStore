@@ -36,7 +36,7 @@ namespace PassionStore.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProductVariant([FromForm] ProductVariantRequest productVariantRequest)
         {
-            var createdVariant = await _productVariantService.CreateProductVariantAsync(productVariantRequest);
+            var createdVariant = await _productVariantService.CreateAsync(productVariantRequest);
             return CreatedAtAction(nameof(GetProductVariantById), new { id = createdVariant.Id }, createdVariant);
         }
 
@@ -44,7 +44,7 @@ namespace PassionStore.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProductVariant(Guid id, [FromForm] ProductVariantRequest productVariantRequest)
         {
-            var updatedVariant = await _productVariantService.UpdateProductVariantAsync(id, productVariantRequest);
+            var updatedVariant = await _productVariantService.UpdateAsync(id, productVariantRequest);
             return Ok(updatedVariant);
         }
 
@@ -52,7 +52,7 @@ namespace PassionStore.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductVariant(Guid id)
         {
-            await _productVariantService.DeleteProductVariantAsync(id);
+            await _productVariantService.DeleteAsync(id);
             return NoContent();
         }
     }

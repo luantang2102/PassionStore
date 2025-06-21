@@ -14,7 +14,10 @@ namespace PassionStore.Core.Interfaces.IRepositories
         Task<ProductVariant> CreateAsync(ProductVariant productVariant);
         Task UpdateAsync(ProductVariant productVariant);
         Task DeleteAsync(ProductVariant productVariant);
+        Task<bool> HasProductVariantAsync(Guid productVariantId);
         Task<bool> HasColorAsync(Guid colorId);
         Task<bool> HasSizeAsync(Guid sizeId);
+        Task<bool> ExistsAsync(Guid productId, Guid colorId, Guid sizeId);
+        Task<List<ProductVariant>> GetByProductIdAsync(Guid productId);
     }
 }

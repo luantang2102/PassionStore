@@ -10,15 +10,18 @@ namespace PassionStore.Application.Services
     public class CartService : ICartService
     {
         private readonly ICartRepository _cartRepository;
+        private readonly ICartItemRepository _cartItemRepository;
         private readonly IProductVariantRepository _productVariantRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CartService(
             ICartRepository cartRepository,
+            ICartItemRepository cartItemRepository,
             IProductVariantRepository productVariantRepository,
             IUnitOfWork unitOfWork)
         {
             _cartRepository = cartRepository;
+            _cartItemRepository = cartItemRepository;
             _productVariantRepository = productVariantRepository;
             _unitOfWork = unitOfWork;
         }
@@ -41,6 +44,7 @@ namespace PassionStore.Application.Services
             {
                 cart = new Cart { UserId = userId, CartItems = [] };
                 await _cartRepository.CreateAsync(cart);
+                await _unitOfWork.CommitAsync();
             }
 
             var productVariant = await _productVariantRepository.GetByIdAsync(cartItemRequest.ProductVariantId);
@@ -61,6 +65,7 @@ namespace PassionStore.Application.Services
             {
                 existingItem.Quantity += cartItemRequest.Quantity;
                 existingItem.Price = productVariant.Price;
+                await _cartItemRepository.UpdateAsync(existingItem);
             }
             else
             {
@@ -71,10 +76,10 @@ namespace PassionStore.Application.Services
                     Price = productVariant.Price,
                     CartId = cart.Id
                 };
+                await _cartItemRepository.CreateAsync(cartItem);
                 cart.CartItems.Add(cartItem);
             }
 
-            await _cartRepository.UpdateAsync(cart);
             await _unitOfWork.CommitAsync();
             return cart.MapModelToResponse();
         }
@@ -88,8 +93,8 @@ namespace PassionStore.Application.Services
                 throw new AppException(ErrorCode.CART_NOT_FOUND, attributes);
             }
 
-            var cartItem = cart.CartItems.FirstOrDefault(i => i.Id == cartItemId);
-            if (cartItem == null)
+            var cartItem = await _cartItemRepository.GetByIdAsync(cartItemId);
+            if (cartItem == null || cartItem.CartId != cart.Id)
             {
                 var attributes = new Dictionary<string, object> { { "cartItemId", cartItemId } };
                 throw new AppException(ErrorCode.CART_ITEM_NOT_FOUND, attributes);
@@ -112,7 +117,7 @@ namespace PassionStore.Application.Services
             cartItem.Quantity = cartItemRequest.Quantity;
             cartItem.Price = productVariant.Price;
 
-            await _cartRepository.UpdateAsync(cart);
+            await _cartItemRepository.UpdateAsync(cartItem);
             await _unitOfWork.CommitAsync();
             return cart.MapModelToResponse();
         }
@@ -126,15 +131,14 @@ namespace PassionStore.Application.Services
                 throw new AppException(ErrorCode.CART_NOT_FOUND, attributes);
             }
 
-            var cartItem = cart.CartItems.FirstOrDefault(i => i.Id == cartItemId);
-            if (cartItem == null)
+            var cartItem = await _cartItemRepository.GetByIdAsync(cartItemId);
+            if (cartItem == null || cartItem.CartId != cart.Id)
             {
                 var attributes = new Dictionary<string, object> { { "cartItemId", cartItemId } };
                 throw new AppException(ErrorCode.CART_ITEM_NOT_FOUND, attributes);
             }
 
-            cart.CartItems.Remove(cartItem);
-            await _cartRepository.UpdateAsync(cart);
+            await _cartItemRepository.DeleteAsync(cartItem);
             await _unitOfWork.CommitAsync();
         }
     }

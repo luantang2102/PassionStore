@@ -28,7 +28,7 @@ namespace PassionStore.Core.Exceptions
         public static readonly ErrorCode REFRESH_TOKEN_EXPIRED = new(706, "Refresh token expired", StatusCodes.Status401Unauthorized);
         public static readonly ErrorCode REFRESH_TOKEN_NOT_FOUND = new(707, "Refresh token not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode PASSWORDS_DO_NOT_MATCH = new(708, "Passwords do not match", StatusCodes.Status400BadRequest);
-        public static readonly ErrorCode EMAIL_NOT_VERIFIED = new(709, "Email not verified", StatusCodes.Status403Forbidden);
+        public static readonly ErrorCode EMAIL_NOT_VERIFIED = new(709, "Email not verified", StatusCodes.Status422UnprocessableEntity);
         public static readonly ErrorCode EMAIL_ALREADY_VERIFIED = new(710, "Email already verified", StatusCodes.Status409Conflict);
         public static readonly ErrorCode INVALID_VERIFICATION_CODE = new(711, "Invalid verification code", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode VERIFICATION_CODE_ALREADY_USED = new(712, "Verification code already used", StatusCodes.Status400BadRequest);
@@ -80,6 +80,7 @@ namespace PassionStore.Core.Exceptions
         public static readonly ErrorCode PRODUCT_VARIANT_NOT_FOUND = new(1300, "Product variant not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode PRODUCT_VARIANT_ALREADY_EXISTS = new(1301, "Product variant already exists", StatusCodes.Status409Conflict);
         public static readonly ErrorCode PRODUCT_VARIANT_IN_CART = new(1302, "Cannot delete product variant because it exists in one or more carts", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode CANNOT_DELETE_DEFAULT_VARIANT = new(1303, "Cannot delete default product variant", StatusCodes.Status400BadRequest);
 
         // Color related errors (1400-1499)
         public static readonly ErrorCode COLOR_NOT_FOUND = new(1400, "Color not found", StatusCodes.Status404NotFound);
@@ -97,6 +98,9 @@ namespace PassionStore.Core.Exceptions
         // User profile and address related errors (1700-1799)
         public static readonly ErrorCode USER_PROFILE_NOT_FOUND = new(1700, "User profile not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ADDRESS_NOT_FOUND = new(1701, "Address not found", StatusCodes.Status404NotFound);
+
+        // Images related errors (1800-1899)
+        public static readonly ErrorCode INVALID_MAIN_IMAGE_COUNT = new(1800, "Invalid main image count", StatusCodes.Status400BadRequest);
 
         /// <summary>
         /// Atributes for error code, message, and status. 
