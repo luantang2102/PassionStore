@@ -1,8 +1,6 @@
-﻿using PassionStore.Application.DTOs.Products;
-using PassionStore.Application.DTOs.ProductVariants;
+﻿using PassionStore.Application.DTOs.ProductVariants;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Paginations;
-using PassionStore.Core.Models;
 
 namespace PassionStore.Application.Interfaces
 {

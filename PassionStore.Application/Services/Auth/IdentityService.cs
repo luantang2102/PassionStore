@@ -1,11 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using PassionStore.Application.DTOs.Identities;
 using PassionStore.Application.DTOs.Users;
-using PassionStore.Application.Interfaces;
 using PassionStore.Application.Interfaces.Auth;
 using PassionStore.Application.Mappers;
 using PassionStore.Core.Exceptions;
@@ -119,7 +115,7 @@ namespace PassionStore.Application.Services.Auth
                     throw new AppException(ErrorCode.CART_CREATION_FAILED);
                 }
             }
-            
+
             var userInfo = await _userRepository.GetByIdAsync(user.Id);
             if (userInfo == null)
             {
@@ -361,7 +357,7 @@ namespace PassionStore.Application.Services.Auth
             var content = await response.Content.ReadAsStringAsync();
 
             var googleUser = JsonConvert.DeserializeObject<GoogleLoginResponse>(content);
-            if(googleUser == null || string.IsNullOrEmpty(googleUser.Email))
+            if (googleUser == null || string.IsNullOrEmpty(googleUser.Email))
             {
                 throw new AppException(ErrorCode.GOOGLE_LOGIN_FAILED);
             }

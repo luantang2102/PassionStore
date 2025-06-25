@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PassionStore.Core.Models;
+using PassionStore.Core.Entities;
 using PassionStore.Infrastructure.Data.Configuration.Base;
 
 namespace PassionStore.Infrastructure.Data.Configuration
@@ -14,11 +14,6 @@ namespace PassionStore.Infrastructure.Data.Configuration
             builder.HasOne(x => x.UserProfile)
                    .WithMany(x => x.Orders)
                    .HasForeignKey(e => e.UserProfileId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(x => x.ShippingAddress)
-                   .WithMany(x => x.Orders)
-                   .HasForeignKey(e => e.ShippingAddressId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }

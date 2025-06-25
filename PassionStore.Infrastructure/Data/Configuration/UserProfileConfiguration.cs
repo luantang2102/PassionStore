@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PassionStore.Core.Models;
+using PassionStore.Core.Entities;
 using PassionStore.Infrastructure.Data.Configuration.Base;
 
 namespace PassionStore.Infrastructure.Data.Configuration
@@ -16,10 +16,6 @@ namespace PassionStore.Infrastructure.Data.Configuration
                    .HasForeignKey(e => e.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Address)
-                   .WithMany(x => x.UserProfiles)
-                   .HasForeignKey(e => e.AddressId)
-                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

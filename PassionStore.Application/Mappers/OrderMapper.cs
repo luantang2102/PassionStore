@@ -1,13 +1,5 @@
-﻿using PassionStore.Application.DTOs.Addresses;
-using PassionStore.Application.DTOs.Orders;
-using PassionStore.Application.DTOs.ProductVariants;
+﻿using PassionStore.Application.DTOs.Orders;
 using PassionStore.Core.Entities;
-using PassionStore.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PassionStore.Application.Mappers
 {
@@ -15,6 +7,7 @@ namespace PassionStore.Application.Mappers
     {
         public static OrderResponse MapModelToResponse(this Order order)
         {
+            
             return new OrderResponse
             {
                 Id = order.Id,
@@ -24,8 +17,7 @@ namespace PassionStore.Application.Mappers
                 PaymentMethod = order.PaymentMethod,
                 UserProfileId = order.UserProfileId,
                 UserFullName = order.UserProfile?.FullName ?? string.Empty,
-                ShippingAddressId = order.ShippingAddressId,
-                ShippingAddress = order.ShippingAddress.MapModelToResponse(),
+                ShippingAddress = order.ShippingAddress,
                 OrderItems = order.OrderItems.Select(i => i.MapModelToResponse()).ToList(),
                 CreatedDate = order.CreatedDate,
                 UpdatedDate = order.UpdatedDate

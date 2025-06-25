@@ -1,4 +1,4 @@
-﻿using PassionStore.Core.Models;
+﻿using PassionStore.Core.Entities;
 
 namespace PassionStore.Infrastructure.Extensions
 {

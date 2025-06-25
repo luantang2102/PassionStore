@@ -42,8 +42,8 @@ namespace PassionStore.Application.Services
         {
             var brands = _brandRepository.GetAllAsync();
             return await brands.Select(x => x.MapModelToResponse()).ToListAsync();
-        } 
-        
+        }
+
         public async Task<PagedList<BrandResponse>> GetBrandsAsync(BrandParams brandParams)
         {
             var query = _brandRepository.GetAllAsync()

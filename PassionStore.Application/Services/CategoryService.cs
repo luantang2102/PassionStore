@@ -149,7 +149,7 @@ namespace PassionStore.Application.Services
             return rootCategories.Select(c => c.MapResponseTree()).ToList();
         }
 
-        
+
 
         public async Task<CategoryResponse> GetCategoryByIdAsync(Guid categoryId)
         {

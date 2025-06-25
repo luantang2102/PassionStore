@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
-using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PassionStore.Infrastructure.Repositories
 {
@@ -54,12 +52,6 @@ namespace PassionStore.Infrastructure.Repositories
         {
             return await _context.UserProfiles
                 .FirstOrDefaultAsync(x => x.UserId == userId);
-        }
-
-        public async Task<Address?> GetAddressByIdAsync(Guid addressId)
-        {
-            return await _context.Addresses
-                .FirstOrDefaultAsync(x => x.Id == addressId);
         }
 
         public async Task<Order> CreateAsync(Order order)

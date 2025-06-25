@@ -3,8 +3,6 @@ using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PassionStore.Infrastructure.Repositories
 {

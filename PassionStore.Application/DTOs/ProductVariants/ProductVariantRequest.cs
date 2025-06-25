@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace PassionStore.Application.DTOs.ProductVariants
+﻿namespace PassionStore.Application.DTOs.ProductVariants
 {
     public class ProductVariantRequest
     {

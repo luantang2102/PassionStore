@@ -15,8 +15,8 @@ namespace PassionStore.Application.DTOs.Products
 
         // Default variant properties
         public bool IsNotHadVariants { get; set; } = false;
-        public decimal DefaultVariantPrice { get; set; } 
-        public int DefaultVariantStockQuantity { get; set; } 
+        public decimal DefaultVariantPrice { get; set; }
+        public int DefaultVariantStockQuantity { get; set; }
     }
 
 }

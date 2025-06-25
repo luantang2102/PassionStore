@@ -4,15 +4,12 @@ using PassionStore.Application.Interfaces;
 using PassionStore.Application.Mappers;
 using PassionStore.Application.Paginations;
 using PassionStore.Core.Entities;
+using PassionStore.Core.Entities.Constants;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Extensions;
 using PassionStore.Infrastructure.Externals;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using PassionStore.Core.Entities.Constants;
 
 namespace PassionStore.Application.Services
 {

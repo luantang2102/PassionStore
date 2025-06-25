@@ -1,6 +1,5 @@
 ﻿using PassionStore.Application.DTOs.UserProfiles;
-using PassionStore.Core.Models;
-
+using PassionStore.Core.Entities;
 
 namespace PassionStore.Application.Mappers
 {
@@ -12,12 +11,14 @@ namespace PassionStore.Application.Mappers
             {
                 Id = userProfile.Id,
                 PhoneNumber = userProfile.PhoneNumber,
-                Address = userProfile.Address.MapModelToResponse(),
+                FullName = userProfile.FullName,
+                Province = userProfile.Province,
+                District = userProfile.District,
+                Ward = userProfile.Ward,
+                SpecificAddress = userProfile.SpecificAddress,
+                IsDefault = userProfile.IsDefault,
                 CreatedDate = userProfile.CreatedDate,
                 UpdatedDate = userProfile.UpdatedDate,
-                //UserId = userProfile.UserId,
-                //UserName = userProfile.User?.UserName,
-                //Email = userProfile.User?.Email
             };
         }
     }

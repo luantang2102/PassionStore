@@ -1,17 +1,14 @@
 ﻿using PassionStore.Application.DTOs.ProductVariants;
+using PassionStore.Application.Helpers.Params;
+using PassionStore.Application.Interfaces;
+using PassionStore.Application.Mappers;
+using PassionStore.Application.Paginations;
+using PassionStore.Core.Entities.Constants;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
-using PassionStore.Infrastructure.Externals;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using PassionStore.Application.Helpers.Params;
-using PassionStore.Application.Mappers;
-using PassionStore.Application.Paginations;
 using PassionStore.Infrastructure.Extensions;
-using PassionStore.Application.Interfaces;
-using PassionStore.Core.Entities.Constants;
+using PassionStore.Infrastructure.Externals;
 
 namespace PassionStore.Application.Services
 {

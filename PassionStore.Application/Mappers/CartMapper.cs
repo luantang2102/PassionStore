@@ -1,5 +1,4 @@
 ﻿using PassionStore.Application.DTOs.Carts;
-using PassionStore.Application.DTOs.Products;
 using PassionStore.Core.Models;
 
 namespace PassionStore.Application.Mappers

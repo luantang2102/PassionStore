@@ -25,7 +25,6 @@ namespace PassionStore.Infrastructure.Data
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<VerifyCode> VerifyCodes { get; set; }
         public DbSet<Report> Reports { get; set; }
@@ -49,7 +48,6 @@ namespace PassionStore.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
             modelBuilder.ApplyConfiguration(new RatingConfiguration());
             modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
-            modelBuilder.ApplyConfiguration(new AddressConfiguration());
             modelBuilder.ApplyConfiguration(new ProductVariantConfiguration());
             modelBuilder.ApplyConfiguration(new VerifyCodeConfiguration());
             modelBuilder.ApplyConfiguration(new ReportConfiguration());

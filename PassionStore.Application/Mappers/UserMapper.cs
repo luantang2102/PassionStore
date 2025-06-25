@@ -27,7 +27,7 @@ namespace PassionStore.Application.Mappers
                 UserName = googleUser.Email.Split("@").ElementAt(0),
                 Email = googleUser.Email,
                 ImageUrl = googleUser.Picture,
-               // PublicId = googleUser.Sub,
+                // PublicId = googleUser.Sub,
                 CreatedDate = DateTime.UtcNow,
                 EmailConfirmed = googleUser.EmailVerified
             };
@@ -36,7 +36,7 @@ namespace PassionStore.Application.Mappers
         public static UserResponse MapModelToResponse(this AppUser user, IList<string> roles = null!)
         {
             roles ??= [];
-            if(user.Cart == null)
+            if (user.Cart == null)
             {
                 user.Cart = new Cart();
             }
@@ -47,16 +47,18 @@ namespace PassionStore.Application.Mappers
                 ImageUrl = user.ImageUrl,
                 PublicId = user.PublicId,
                 Email = user.Email,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
                 CreatedDate = user.CreatedDate,
                 UpdatedDate = user.UpdatedDate,
                 EmailConfirmed = user.EmailConfirmed,
                 Roles = roles.ToList(),
                 UserProfiles = user.UserProfiles.Select(x => x.MapModelToResponse()).ToList(),
                 Ratings = user.Ratings.Select(x => x.MapModelToReponse()).ToList(),
-                Cart = user.Cart.MapModelToResponse(),
+                CartItemsCount = user.Cart.CartItems?.Count ?? 0
             };
         }
 
-        
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using PassionStore.Core.Models;
+﻿using PassionStore.Core.Models;
 
 namespace PassionStore.Core.Interfaces.IRepositories
 {

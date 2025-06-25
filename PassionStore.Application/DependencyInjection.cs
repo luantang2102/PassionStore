@@ -5,7 +5,6 @@ using PassionStore.Application.Interfaces.Auth;
 using PassionStore.Application.Services;
 using PassionStore.Application.Services.Auth;
 using PassionStore.Core.Interfaces.IServices;
-using PassionStore.Infrastructure.Externals;
 using PassionStore.Infrastructure.Settings;
 
 namespace Microsoft.Extensions.DependencyInjection

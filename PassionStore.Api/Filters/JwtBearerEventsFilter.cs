@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using PassionStore.Core.Exceptions;
-using Microsoft.AspNetCore.Http;
 
 namespace PassionStore.Api.Filters
 {

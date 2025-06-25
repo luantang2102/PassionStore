@@ -1,5 +1,4 @@
 ﻿using PassionStore.Core.Models;
-using System.Linq;
 
 namespace PassionStore.Core.Interfaces.IRepositories
 {

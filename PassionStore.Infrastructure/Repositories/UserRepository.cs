@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models.Auth;
 using PassionStore.Infrastructure.Data;
@@ -49,7 +48,6 @@ public class UserRepository : IUserRepository
     {
         return _context.Users
             .Include(x => x.UserProfiles)
-            .ThenInclude(x => x.Address)
             .Include(x => x.Cart)
             .Include(x => x.Ratings);
     }
@@ -58,8 +56,8 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .Include(x => x.UserProfiles)
-            .ThenInclude(x => x.Address)
             .Include(x => x.Cart)
+            .ThenInclude(x => x.CartItems)
             .Include(x => x.Ratings)
             .FirstOrDefaultAsync(x => x.Id == userId);
     }

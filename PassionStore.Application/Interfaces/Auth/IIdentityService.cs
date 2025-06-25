@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using PassionStore.Application.DTOs.Identities;
+﻿using PassionStore.Application.DTOs.Identities;
 using PassionStore.Application.DTOs.Users;
 
 namespace PassionStore.Application.Interfaces.Auth

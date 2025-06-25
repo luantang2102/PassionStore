@@ -61,13 +61,7 @@ namespace PassionStore.Application.Services
                 throw new AppException(ErrorCode.USER_PROFILE_NOT_FOUND, attributes);
             }
 
-            var shippingAddress = await _orderRepository.GetAddressByIdAsync(orderRequest.ShippingAddressId);
-            if (shippingAddress == null)
-            {
-                var attributes = new Dictionary<string, object> { { "shippingAddressId", orderRequest.ShippingAddressId } };
-                throw new AppException(ErrorCode.ADDRESS_NOT_FOUND, attributes);
-            }
-
+            
             var cart = await _cartRepository.GetByUserIdAsync(userId);
             if (cart == null || !cart.CartItems.Any())
             {
@@ -75,10 +69,17 @@ namespace PassionStore.Application.Services
                 throw new AppException(ErrorCode.CART_NOT_FOUND, attributes);
             }
 
+            var shippingAddress = String.Concat(
+                userProfile.SpecificAddress ?? string.Empty, ", ",
+                userProfile.Ward ?? string.Empty, ", ",
+                userProfile.District ?? string.Empty, ", ",
+                userProfile.Province ?? string.Empty
+            );
+
             var order = new Order
             {
                 UserProfileId = userProfile.Id,
-                ShippingAddressId = orderRequest.ShippingAddressId,
+                ShippingAddress = shippingAddress,
                 PaymentMethod = orderRequest.PaymentMethod,
                 Status = "Pending",
                 OrderDate = DateTime.UtcNow,

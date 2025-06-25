@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Data;

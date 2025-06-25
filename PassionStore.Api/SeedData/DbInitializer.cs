@@ -26,10 +26,7 @@ namespace PassionStore.Api.SeedData
             var dbContext = services.GetRequiredService<AppDbContext>()
                 ?? throw new InvalidOperationException("Failed to retrieve app db context");
 
-            await SeedAddresses(dbContext);
             await dbContext.SaveChangesAsync(); // Ensure addresses are saved
-            await SeedUserProfiles(dbContext, userManager);
-            await SeedOrders(dbContext);
             await SeedCategory(dbContext);
             await SeedSubCategories(dbContext);
             await SeedBrands(dbContext);
@@ -87,82 +84,6 @@ namespace PassionStore.Api.SeedData
                         await userManager.AddToRoleAsync(newUser, userData.Role.ToString());
                     }
                 }
-            }
-        }
-
-        private static async Task SeedAddresses(AppDbContext context)
-        {
-            if (!context.Addresses.Any())
-            {
-                var addresses = new List<Address>
-                {
-                    new Address { Street = "123 Main St", City = "Hanoi", State = "Ha Noi", PostalCode = "10000", Country = "Vietnam" },
-                    new Address { Street = "456 Oak Ave", City = "Ho Chi Minh", State = "Ho Chi Minh", PostalCode = "70000", Country = "Vietnam" }
-                };
-
-                await context.Addresses.AddRangeAsync(addresses);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        private static async Task SeedUserProfiles(AppDbContext context, UserManager<AppUser> userManager)
-        {
-            if (!context.UserProfiles.Any())
-            {
-                var luanUser = await userManager.FindByEmailAsync("luantang.work@gmail.com");
-                var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
-                var addresses = await context.Addresses.ToListAsync();
-
-                if (luanUser == null || adminUser == null || !addresses.Any())
-                {
-                    throw new InvalidOperationException("Required users or addresses not found for seeding user profiles.");
-                }
-
-                var userProfiles = new List<UserProfile>
-                {
-                    new UserProfile { FullName = "Luan Tang", PhoneNumber = "0901234567", UserId = luanUser.Id, AddressId = addresses[0].Id },
-                    new UserProfile { FullName = "Admin User", PhoneNumber = "0907654321", UserId = adminUser.Id, AddressId = addresses[1].Id }
-                };
-
-                await context.UserProfiles.AddRangeAsync(userProfiles);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        private static async Task SeedOrders(AppDbContext context)
-        {
-            if (!context.Orders.Any())
-            {
-                var userProfiles = await context.UserProfiles.ToListAsync();
-                var addresses = await context.Addresses.ToListAsync();
-
-                if (!userProfiles.Any() || !addresses.Any())
-                {
-                    throw new InvalidOperationException("Required user profiles or addresses not found for seeding orders.");
-                }
-
-                var orders = new List<Order>
-                {
-                    new Order
-                    {
-                        TotalAmount = 300,
-                        Status = "Pending",
-                        OrderDate = DateTime.UtcNow,
-                        UserProfileId = userProfiles[0].Id,
-                        ShippingAddressId = addresses[0].Id
-                    },
-                    new Order
-                    {
-                        TotalAmount = 200,
-                        Status = "Completed",
-                        OrderDate = DateTime.UtcNow.AddDays(-1),
-                        UserProfileId = userProfiles[1].Id,
-                        ShippingAddressId = addresses[1].Id
-                    }
-                };
-
-                await context.Orders.AddRangeAsync(orders);
-                await context.SaveChangesAsync();
             }
         }
 
@@ -382,7 +303,7 @@ namespace PassionStore.Api.SeedData
             }
         }
 
-      
+
         private static async Task SeedOrderItems(AppDbContext context)
         {
             if (!context.OrderItems.Any())

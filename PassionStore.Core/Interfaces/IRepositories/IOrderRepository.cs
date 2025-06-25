@@ -1,4 +1,4 @@
-﻿using PassionStore.Core.Models;
+﻿using PassionStore.Core.Entities;
 
 namespace PassionStore.Core.Interfaces.IRepositories
 {
@@ -6,7 +6,6 @@ namespace PassionStore.Core.Interfaces.IRepositories
     {
         Task<Order> CreateAsync(Order order);
         Task DeleteAsync(Order order);
-        Task<Address?> GetAddressByIdAsync(Guid addressId);
         Task<Order?> GetByIdAsync(Guid orderId);
         IQueryable<Order> GetByUserIdAsync(Guid userId);
         Task<UserProfile?> GetUserProfileByUserIdAsync(Guid userId);

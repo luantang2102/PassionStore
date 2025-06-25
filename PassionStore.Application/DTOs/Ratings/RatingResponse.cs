@@ -1,8 +1,4 @@
-﻿
-
-using PassionStore.Application.DTOs.Users;
-
-namespace PassionStore.Application.DTOs.Ratings
+﻿namespace PassionStore.Application.DTOs.Ratings
 {
     public class RatingResponse
     {

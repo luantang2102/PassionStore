@@ -1,5 +1,4 @@
 ﻿using PassionStore.Application.DTOs.Colors;
-using PassionStore.Application.DTOs.ProductVariants;
 using PassionStore.Application.DTOs.Sizes;
 
 namespace PassionStore.Application.DTOs.Carts
