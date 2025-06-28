@@ -5,29 +5,42 @@ using PassionStore.Api.Extensions;
 using PassionStore.Application.DTOs.Orders;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
+using PassionStore.Core.Exceptions;
 
 namespace PassionStore.Api.Controllers
 {
-    [Authorize]
-    public class OrderController : BaseApiController
+    public class OrdersController : BaseApiController
     {
         private readonly IOrderService _orderService;
 
-        public OrderController(IOrderService orderService)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOrders([FromQuery] OrderParams orderParams)
         {
-            var userId = User.GetUserId();
-            var orders = await _orderService.GetOrdersByUserIdAsync(userId, orderParams);
+            var orders = await _orderService.GetOrdersAsync(orderParams);
             Response.AddPaginationHeader(orders.Metadata);
             return Ok(orders);
         }
 
+
+        [HttpGet("/me")]
+        [Authorize]
+        public async Task<IActionResult> GetSelfOrders([FromQuery] OrderParams orderParams)
+        {
+            var userId = User.GetUserId();
+            var orders = await _orderService.GetSelfOrdersAsync(userId, orderParams);
+            Response.AddPaginationHeader(orders.Metadata);
+            return Ok(orders);
+        }
+
+
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
             var userId = User.GetUserId();
@@ -36,6 +49,7 @@ namespace PassionStore.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateOrder([FromForm] OrderRequest orderRequest)
         {
             var userId = User.GetUserId();
@@ -51,13 +65,27 @@ namespace PassionStore.Api.Controllers
             return Ok(updatedOrder);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CancelOrder(Guid id)
+        [HttpDelete("{id}/cancel")]
+        [Authorize]
+        public async Task<IActionResult> CancelOrder(Guid id, string? cancellationReason)
         {
             var userId = User.GetUserId();
-            await _orderService.CancelOrderAsync(userId, id);
+            await _orderService.CancelOrderAsync(userId, id, cancellationReason);
             return NoContent();
+        }
+
+        [HttpGet("payment-callback")]
+        [Authorize]
+        public async Task<IActionResult> HandlePaymentCallback([FromQuery] string code, [FromQuery] string id, [FromQuery] bool cancel, [FromQuery] string status, [FromQuery] long orderCode)
+        {
+
+            var orderResponse = await _orderService.HandlePaymentCallbackAsync(code, id, cancel, status, orderCode);
+            if (orderResponse != null)
+            {
+                return Ok(orderResponse);
+            }
+            return NoContent();
+
         }
     }
 }

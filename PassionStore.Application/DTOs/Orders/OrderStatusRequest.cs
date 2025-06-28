@@ -1,7 +1,9 @@
-﻿namespace PassionStore.Application.DTOs.Orders
+﻿using PassionStore.Core.Enums;
+
+namespace PassionStore.Application.DTOs.Orders
 {
     public class OrderStatusRequest
     {
-        public string Status { get; set; } = string.Empty;
+        public OrderStatus Status { get; set; }
     }
 }

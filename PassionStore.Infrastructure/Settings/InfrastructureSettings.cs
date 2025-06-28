@@ -6,4 +6,5 @@ public class InfrastructureSettings
     public JwtOption JwtOption { get; set; } = new JwtOption();
     public CloudinaryOption CloudinaryOption { get; set; } = new CloudinaryOption();
     public EmailOption EmailOption { get; set; } = new EmailOption();
+    public PayOSOption PayOSOptions { get; set; } = new PayOSOption();
 }

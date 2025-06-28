@@ -70,11 +70,11 @@ namespace PassionStore.Core.Exceptions
         // Order related errors (1100-1199) 
         public static readonly ErrorCode ORDER_NOT_FOUND = new(1100, "Order not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ORDER_NOT_CANCELLABLE = new(1101, "Order cannot be cancelled", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode INVALID_STATUS_TRANSITION = new(1102, "Invalid status transition", StatusCodes.Status400BadRequest);
 
         // Payment related errors (1200-1299)
-        public static readonly ErrorCode INVALID_PAYMENT_INTENT = new(1200, "Invalid payment intent", StatusCodes.Status400BadRequest);
-        public static readonly ErrorCode PAYMENT_FAILED = new(1201, "Payment failed", StatusCodes.Status400BadRequest);
-        public static readonly ErrorCode PAYMENT_NOT_FOUND = new(1202, "Payment not found", StatusCodes.Status404NotFound);
+        public static readonly ErrorCode PAYMENT_CREATION_FAILED = new(1200, "Payment creation failed", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode PAYMENT_CANCELLATION_FAILED = new(1201, "Payment cancellation failed", StatusCodes.Status400BadRequest);
 
         // Product variant related errors (1300-1399)
         public static readonly ErrorCode PRODUCT_VARIANT_NOT_FOUND = new(1300, "Product variant not found", StatusCodes.Status404NotFound);

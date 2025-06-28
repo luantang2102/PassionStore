@@ -1,4 +1,5 @@
-﻿using PassionStore.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Infrastructure.Data;
 
@@ -13,29 +14,49 @@ namespace PassionStore.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task<OrderItem> CreateAsync(OrderItem orderItem)
+        public async Task<OrderItem> CreateAsync(OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            await _context.OrderItems.AddAsync(orderItem);
+            return orderItem;
         }
 
-        public Task DeleteAsync(OrderItem orderItem)
+        public async Task DeleteAsync(OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            _context.OrderItems.Remove(orderItem);
+            await Task.CompletedTask;
         }
 
         public IQueryable<OrderItem> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return _context.OrderItems
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.ProductImages)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Size)
+                .Include(x => x.Order);
         }
 
-        public Task<OrderItem?> GetByIdAsync(Guid orderItemId)
+        public async Task<OrderItem?> GetByIdAsync(Guid orderItemId)
         {
-            throw new NotImplementedException();
+            return await _context.OrderItems
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Product)
+                .ThenInclude(x => x.ProductImages)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductVariant)
+                .ThenInclude(x => x.Size)
+                .Include(x => x.Order)
+                .FirstOrDefaultAsync(x => x.Id == orderItemId);
         }
 
-        public Task UpdateAsync(OrderItem orderItem)
+        public async Task UpdateAsync(OrderItem orderItem)
         {
-            throw new NotImplementedException();
+            _context.OrderItems.Update(orderItem);
+            await Task.CompletedTask;
         }
     }
 }

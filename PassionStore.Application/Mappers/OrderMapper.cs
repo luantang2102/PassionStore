@@ -1,5 +1,7 @@
 ﻿using PassionStore.Application.DTOs.Orders;
 using PassionStore.Core.Entities;
+using PassionStore.Core.Models;
+using PassionStore.Core.Enums;
 
 namespace PassionStore.Application.Mappers
 {
@@ -7,17 +9,21 @@ namespace PassionStore.Application.Mappers
     {
         public static OrderResponse MapModelToResponse(this Order order)
         {
-            
             return new OrderResponse
             {
                 Id = order.Id,
                 TotalAmount = order.TotalAmount,
-                Status = order.Status,
+                ShippingCost = (decimal)order.ShippingMethod,
+                Status = order.Status.ToString(),
                 OrderDate = order.OrderDate,
-                PaymentMethod = order.PaymentMethod,
+                PaymentMethod = order.PaymentMethod.ToString(),
+                ShippingMethod = order.ShippingMethod.ToString(),
+                PaymentLink = order.PaymentLink,
+                PaymentTransactionId = order.PaymentTransactionId,
                 UserProfileId = order.UserProfileId,
                 UserFullName = order.UserProfile?.FullName ?? string.Empty,
                 ShippingAddress = order.ShippingAddress,
+                Note = order.Note,
                 OrderItems = order.OrderItems.Select(i => i.MapModelToResponse()).ToList(),
                 CreatedDate = order.CreatedDate,
                 UpdatedDate = order.UpdatedDate
@@ -33,6 +39,7 @@ namespace PassionStore.Application.Mappers
                 Price = orderItem.Price,
                 ProductVariantId = orderItem.ProductVariantId,
                 ProductName = orderItem.ProductVariant!.Product.Name,
+                ProductImage = orderItem.ProductVariant.Product.ProductImages?.FirstOrDefault()?.ImageUrl ?? string.Empty,
                 Color = orderItem.ProductVariant!.Color.MapModelToResponse(),
                 Size = orderItem.ProductVariant!.Size.MapModelToResponse(),
                 ProductId = orderItem.ProductVariant.ProductId,

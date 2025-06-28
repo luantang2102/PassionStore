@@ -11,6 +11,7 @@ namespace PassionStore.Application.DTOs.Orders
         public Guid ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string ProductDescription { get; set; } = string.Empty;
+        public string ProductImage { get; set; } = string.Empty;
 
         // Product Variant
         public Guid ProductVariantId { get; set; }

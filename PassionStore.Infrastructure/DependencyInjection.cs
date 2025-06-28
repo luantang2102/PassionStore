@@ -5,6 +5,7 @@ using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models.Auth;
 using PassionStore.Infrastructure.Data;
 using PassionStore.Infrastructure.Externals;
+using PassionStore.Infrastructure.Externals.Payos;
 using PassionStore.Infrastructure.Repositories;
 using PassionStore.Infrastructure.Settings;
 
@@ -64,6 +65,14 @@ public static class DependencyInjection
         {
             return new CloudinaryService(cloudinaryOption);
         });
+
+        var payOSOption = new PayOSOption();
+        configuration.GetSection("InfrastructureSettings:PayOSOption").Bind(payOSOption);
+        services.AddScoped<PayOSService>(_ =>
+        {
+            return new PayOSService(payOSOption);
+        });
+
         return services;
     }
 }
