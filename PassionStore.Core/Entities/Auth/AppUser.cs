@@ -28,6 +28,7 @@ namespace PassionStore.Core.Models.Auth
         public virtual ICollection<History> Histories { get; set; } = [];
         public virtual ICollection<Notification> Notifications { get; set; } = [];
         public virtual ICollection<Chat> Chats { get; set; } = [];
+        public virtual ICollection<HelpfulVote> HelpfulVotes { get; set; } = [];
 
 
     }

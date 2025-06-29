@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using PassionStore.Application.DTOs.Products;
 
-namespace PassionStore.Application.Validators
+namespace PassionStore.Application.Validators.Requests
 {
     public class ProductRequestValidator : AbstractValidator<ProductRequest>
     {

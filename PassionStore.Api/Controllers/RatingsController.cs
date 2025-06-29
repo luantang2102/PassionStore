@@ -5,6 +5,9 @@ using PassionStore.Api.Extensions;
 using PassionStore.Application.DTOs.Ratings;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
+using PassionStore.Application.Paginations;
+using System;
+using System.Threading.Tasks;
 
 namespace PassionStore.Api.Controllers
 {
@@ -18,7 +21,7 @@ namespace PassionStore.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRatings([FromQuery] RatingParams ratingParams)
+        public async Task<ActionResult<PagedList<RatingResponse>>> GetRatings([FromQuery] RatingParams ratingParams)
         {
             var ratings = await _ratingService.GetRatingsAsync(ratingParams);
             Response.AddPaginationHeader(ratings.Metadata);
@@ -26,45 +29,57 @@ namespace PassionStore.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRatingById(Guid id)
+        [Authorize]
+        public async Task<ActionResult<RatingResponse>> GetRatingById(Guid id)
         {
-            var rating = await _ratingService.GetRatingByIdAsync(id);
+            var userId = User.GetUserId();
+            var rating = await _ratingService.GetRatingByIdAsync(id, userId);
             return Ok(rating);
         }
 
-        [HttpGet("product/{productId}")]
-        public async Task<IActionResult> GetRatingsByProductId(Guid productId, [FromQuery] RatingParams ratingParams)
-        {
-            var ratings = await _ratingService.GetRatingsByProductIdAsync(ratingParams, productId);
-            Response.AddPaginationHeader(ratings.Metadata);
-            return Ok(ratings);
-        }
-
         [HttpPost]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> CreateRating([FromBody] RatingRequest ratingRequest)
+        [Authorize]
+        public async Task<ActionResult<RatingResponse>> CreateRating([FromForm] RatingRequest ratingRequest)
         {
             var userId = User.GetUserId();
-            var createdRating = await _ratingService.CreateRatingAsync(userId, ratingRequest);
+            var createdRating = await _ratingService.CreateRatingAsync(ratingRequest, userId);
             return CreatedAtAction(nameof(GetRatingById), new { id = createdRating.Id }, createdRating);
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> UpdateRating(Guid id, [FromBody] RatingRequest ratingRequest)
+        [Authorize]
+        public async Task<ActionResult<RatingResponse>> UpdateRating(Guid id, [FromForm] RatingRequest ratingRequest)
         {
             var userId = User.GetUserId();
-            var updatedRating = await _ratingService.UpdateRatingAsync(userId, id, ratingRequest);
+            var updatedRating = await _ratingService.UpdateRatingAsync(ratingRequest, id, userId);
             return Ok(updatedRating);
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "User")]
+        [Authorize]
         public async Task<IActionResult> DeleteRating(Guid id)
         {
             var userId = User.GetUserId();
-            await _ratingService.DeleteRatingAsync(userId, id);
+            await _ratingService.DeleteRatingAsync(id, userId);
             return NoContent();
+        }
+
+        [HttpPost("{id}/helpful")]
+        [Authorize]
+        public async Task<IActionResult> ToggleHelpful(Guid id)
+        {
+            var userId = User.GetUserId();
+            await _ratingService.ToggleHelpfulAsync(id, userId);
+            return NoContent();
+        }
+
+        [HttpGet("has-rated/{productId}")]
+        [Authorize]
+        public async Task<ActionResult<bool>> HasRatedProduct(Guid productId)
+        {
+            var userId = User.GetUserId();
+            var hasRated = await _ratingService.HasRatedAsync(userId, productId);
+            return Ok(hasRated);
         }
     }
 }

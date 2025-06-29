@@ -15,5 +15,7 @@ namespace PassionStore.Core.Interfaces.IRepositories
         Task UpdateAsync(Order order);
         Task DeleteAsync(Order order);
         Task<Order?> GetByPaymentTransactionIdAsync(string paymentTransactionId);
+        Task<bool> HasUserPurchasedProductAsync(Guid userId, Guid productId);
+        Task<Order?> GetCompletedOrderForProductAsync(Guid userId, Guid productId);
     }
 }

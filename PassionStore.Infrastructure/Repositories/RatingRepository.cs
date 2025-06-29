@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
-using PassionStore.Core.Models.Auth;
 using PassionStore.Infrastructure.Data;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PassionStore.Infrastructure.Repositories
 {
@@ -18,55 +20,48 @@ namespace PassionStore.Infrastructure.Repositories
         public IQueryable<Rating> GetAllAsync()
         {
             return _context.Ratings
-                .Include(x => x.User)
-                .Include(x => x.Product);
-        }
-
-        public async Task<Rating?> GetByIdAsync(Guid ratingId)
-        {
-            return await _context.Ratings
-                .Include(x => x.User)
                 .Include(x => x.Product)
-                .FirstOrDefaultAsync(x => x.Id == ratingId);
+                .Include(x => x.User);
         }
 
         public IQueryable<Rating> GetByProductIdAsync(Guid productId)
         {
             return _context.Ratings
-                .Include(x => x.User)
                 .Include(x => x.Product)
+                .Include(x => x.User)
                 .Where(x => x.ProductId == productId);
         }
 
-        public async Task<Rating?> GetByUserAndProductAsync(Guid userId, Guid productId)
+        public async Task<Rating?> GetByIdAsync(Guid ratingId)
         {
             return await _context.Ratings
-                .FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId);
-        }
-
-        public async Task<AppUser?> GetUserByIdAsync(Guid userId)
-        {
-            return await _context.Users
-                .FirstOrDefaultAsync(x => x.Id == userId);
+                .Include(x => x.Product)
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == ratingId);
         }
 
         public async Task<Rating> CreateAsync(Rating rating)
         {
-            _context.Ratings.Add(rating);
-            await _context.SaveChangesAsync();
+            await _context.Ratings.AddAsync(rating);
             return rating;
         }
 
         public async Task UpdateAsync(Rating rating)
         {
             _context.Ratings.Update(rating);
-            await _context.SaveChangesAsync();
+            await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(Rating rating)
         {
             _context.Ratings.Remove(rating);
-            await _context.SaveChangesAsync();
+            await Task.CompletedTask;
+        }
+
+        public async Task<bool> HasRatedAsync(Guid userId, Guid productId)
+        {
+            return await _context.Ratings
+                .AnyAsync(x => x.UserId == userId && x.ProductId == productId);
         }
     }
 }

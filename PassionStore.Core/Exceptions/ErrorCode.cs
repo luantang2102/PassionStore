@@ -54,11 +54,16 @@ namespace PassionStore.Core.Exceptions
         public static readonly ErrorCode PARENT_CATEGORY_NOT_FOUND = new(802, "Parent category not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode CATEGORY_CIRCULAR_REFERENCE = new(803, "Category circular reference", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode CATEGORY_HAS_SUBCATEGORIES = new(804, "Category has subcategories, cannot delete", StatusCodes.Status400BadRequest);
-        public static readonly ErrorCode CATEGORY_HAS_PRODUCTS = new(804, "Category has products, cannot delete", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode CATEGORY_HAS_PRODUCTS = new(805, "Category has products, cannot delete", StatusCodes.Status400BadRequest);
 
         // Rating related errors (900-999)
         public static readonly ErrorCode RATING_NOT_FOUND = new(900, "Rating not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode RATING_ALREADY_EXISTS = new(901, "Rating already exists", StatusCodes.Status409Conflict);
+        public static readonly ErrorCode USER_NOT_PURCHASED_PRODUCT = new(902, "User not purchased product", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode USER_ALREADY_RATED = new(903, "User already rated", StatusCodes.Status409Conflict);
+        public static readonly ErrorCode ORDER_NOT_COMPLETED = new(904, "Order is not completed", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode RATING_WINDOW_EXPIRED = new(905, "Cannot rating anymore, window expired", StatusCodes.Status400BadRequest);
+        
 
         // Cart related errors (1000-1099)
         public static readonly ErrorCode CART_NOT_FOUND = new(1000, "Cart item not found", StatusCodes.Status404NotFound);

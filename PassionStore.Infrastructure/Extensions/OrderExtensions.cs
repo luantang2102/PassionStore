@@ -25,10 +25,10 @@ namespace PassionStore.Infrastructure.Extensions
         {
             query = orderBy switch
             {
-                "dateDesc" => query.OrderByDescending(x => x.OrderDate),
+                "dateAsc" => query.OrderBy(x => x.OrderDate),
                 "totalAsc" => query.OrderBy(x => x.TotalAmount),
                 "totalDesc" => query.OrderByDescending(x => x.TotalAmount),
-                _ => query.OrderBy(x => x.OrderDate),
+                _ => query.OrderByDescending(x => x.OrderDate),
             };
             return query;
         }

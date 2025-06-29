@@ -7,6 +7,7 @@ namespace PassionStore.Core.Entities
     {
         public int Value { get; set; }
         public string? Comment { get; set; } = string.Empty;
+        public int Helpful { get; set; } = 0;
 
         // Foreign key
         public Guid ProductId { get; set; }
@@ -15,5 +16,7 @@ namespace PassionStore.Core.Entities
         // Navigation properties
         public virtual Product Product { get; set; } = null!;
         public virtual AppUser User { get; set; } = null!;
+        public virtual ICollection<HelpfulVote> HelpfulVotes { get; set; } = [];
+
     }
 }

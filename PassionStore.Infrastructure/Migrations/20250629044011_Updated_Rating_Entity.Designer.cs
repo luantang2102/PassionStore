@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PassionStore.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PassionStore.Infrastructure.Data;
 namespace PassionStore.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250629044011_Updated_Rating_Entity")]
+    partial class Updated_Rating_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,34 +154,6 @@ namespace PassionStore.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("PassionStore.Core.Entities.HelpfulVote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RatingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("RatingId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("HelpfulVotes");
                 });
 
             modelBuilder.Entity("PassionStore.Core.Entities.Order", b =>
@@ -1055,25 +1030,6 @@ namespace PassionStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PassionStore.Core.Entities.HelpfulVote", b =>
-                {
-                    b.HasOne("PassionStore.Core.Entities.Rating", "Rating")
-                        .WithMany("HelpfulVotes")
-                        .HasForeignKey("RatingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PassionStore.Core.Models.Auth.AppUser", "User")
-                        .WithMany("HelpfulVotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Rating");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PassionStore.Core.Entities.Order", b =>
                 {
                     b.HasOne("PassionStore.Core.Entities.UserProfile", "UserProfile")
@@ -1318,11 +1274,6 @@ namespace PassionStore.Infrastructure.Migrations
                     b.Navigation("Ratings");
                 });
 
-            modelBuilder.Entity("PassionStore.Core.Entities.Rating", b =>
-                {
-                    b.Navigation("HelpfulVotes");
-                });
-
             modelBuilder.Entity("PassionStore.Core.Entities.UserProfile", b =>
                 {
                     b.Navigation("Orders");
@@ -1334,8 +1285,6 @@ namespace PassionStore.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Chats");
-
-                    b.Navigation("HelpfulVotes");
 
                     b.Navigation("Histories");
 

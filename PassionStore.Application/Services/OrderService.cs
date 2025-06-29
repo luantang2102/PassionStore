@@ -28,6 +28,7 @@ namespace PassionStore.Application.Services
         private readonly ICartRepository _cartRepository;
         private readonly IProductVariantRepository _productVariantRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IRatingRepository _ratingRepository; 
         private readonly IUnitOfWork _unitOfWork;
         private readonly PayOSService _payOSService;
 
@@ -36,6 +37,7 @@ namespace PassionStore.Application.Services
             ICartRepository cartRepository,
             IProductVariantRepository productVariantRepository,
             IUserRepository userRepository,
+            IRatingRepository ratingRepository,
             IUnitOfWork unitOfWork,
             PayOSService payOSService)
         {
@@ -43,6 +45,7 @@ namespace PassionStore.Application.Services
             _cartRepository = cartRepository;
             _productVariantRepository = productVariantRepository;
             _userRepository = userRepository;
+            _ratingRepository = ratingRepository;
             _unitOfWork = unitOfWork;
             _payOSService = payOSService;
         }
@@ -375,5 +378,7 @@ namespace PassionStore.Application.Services
                 _ => false
             };
         }
+
     }
+
 }

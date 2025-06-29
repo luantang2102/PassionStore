@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using PassionStore.Application.DTOs.Categories;
 
-namespace PassionStore.Core.Validators
+namespace PassionStore.Application.Validators.Requests
 {
     public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
     {

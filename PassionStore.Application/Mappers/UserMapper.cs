@@ -54,7 +54,7 @@ namespace PassionStore.Application.Mappers
                 EmailConfirmed = user.EmailConfirmed,
                 Roles = roles.ToList(),
                 UserProfiles = user.UserProfiles.Select(x => x.MapModelToResponse()).ToList(),
-                Ratings = user.Ratings.Select(x => x.MapModelToReponse()).ToList(),
+                Ratings = user.Ratings.Select(x => x.MapModelToResponse()).ToList(),
                 CartItemsCount = user.Cart.CartItems?.Count ?? 0
             };
         }

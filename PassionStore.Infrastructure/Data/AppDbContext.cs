@@ -35,6 +35,7 @@ namespace PassionStore.Infrastructure.Data
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Size> Sizes { get; set; }
+        public DbSet<HelpfulVote> HelpfulVotes { get; set; } // Added DbSet
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +59,7 @@ namespace PassionStore.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new BrandConfiguration());
             modelBuilder.ApplyConfiguration(new ColorConfiguration());
             modelBuilder.ApplyConfiguration(new SizeConfiguration());
+            modelBuilder.ApplyConfiguration(new HelpfulVoteConfiguration()); // Added configuration
 
             base.OnModelCreating(modelBuilder);
 
@@ -70,13 +72,13 @@ namespace PassionStore.Infrastructure.Data
             modelBuilder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaims");
         }
     }
+
     public class ProductContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../PassionStore.Api");
 
-            // Load configuration from appsettings.json
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)

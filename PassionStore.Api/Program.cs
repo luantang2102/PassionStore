@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PassionStore.Api.Extensions;
 using PassionStore.Api.Filters;
 using PassionStore.Api.SeedData;
-using PassionStore.Application.Validators.Auth;
+using PassionStore.Application.Validators.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

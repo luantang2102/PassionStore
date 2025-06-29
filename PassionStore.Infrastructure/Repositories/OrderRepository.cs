@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PassionStore.Core.Entities;
+using PassionStore.Core.Enums;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Infrastructure.Data;
 using System;
@@ -109,6 +110,29 @@ namespace PassionStore.Infrastructure.Repositories
                     .ThenInclude(x => x.ProductVariant)
                         .ThenInclude(x => x.Size)
                 .FirstOrDefaultAsync(x => x.PaymentTransactionId == paymentTransactionId);
+        }
+
+        public async Task<bool> HasUserPurchasedProductAsync(Guid userId, Guid productId)
+        {
+            return await _context.Orders
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.ProductVariant)
+                .Where(x => x.UserProfile.UserId == userId && x.Status == OrderStatus.Completed)
+                .AnyAsync(x => x.OrderItems.Any(oi => oi.ProductVariant.ProductId == productId));
+        }
+
+        public async Task<Order?> GetCompletedOrderForProductAsync(Guid userId, Guid productId)
+        {
+            return await _context.Orders
+                .Include(x => x.OrderItems)
+                .ThenInclude(x => x.ProductVariant)
+                .ThenInclude(x => x.Product)
+                .Include(x => x.UserProfile)
+                .Where(x => x.UserProfile.UserId == userId &&
+                            x.OrderItems.Any(oi => oi.ProductVariant.ProductId == productId) &&
+                            x.Status == OrderStatus.Completed)
+                .OrderByDescending(x => x.UpdatedDate)
+                .FirstOrDefaultAsync();
         }
     }
 }

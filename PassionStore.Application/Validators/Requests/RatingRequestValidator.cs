@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using PassionStore.Application.DTOs.Ratings;
 
-namespace PassionStore.Application.Validators
+namespace PassionStore.Application.Validators.Requests
 {
     public class RatingRequestValidator : AbstractValidator<RatingRequest>
     {

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassionStore.Core", "Passio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassionStore.Infrastructure", "PassionStore.Infrastructure\PassionStore.Infrastructure.csproj", "{9B98E4D3-3CF8-492C-B1A3-F0918D8A3AB0}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "PassionStore.Office", "PassionStore.Office\PassionStore.Office.esproj", "{EC5449B5-6499-5E92-AB28-EE55726963C5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassionStore.Application", "PassionStore.Application\PassionStore.Application.csproj", "{F3197461-9954-4AFF-85B5-D2EAC0CCE7EE}"
 EndProject
 Global

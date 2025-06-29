@@ -28,7 +28,7 @@ namespace PassionStore.Api.Controllers
         }
 
 
-        [HttpGet("/me")]
+        [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetSelfOrders([FromQuery] OrderParams orderParams)
         {
