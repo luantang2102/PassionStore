@@ -15,7 +15,7 @@ namespace PassionStore.Core.Models.Auth
         public override string? UserName { get; set; } = "Anonymous";
         public override string? Email { get; set; } = "Anonymous";
         public string Gender { get; set; } = "Unknown";
-        public DateTime? DateOfBirth { get; set; } 
+        public DateTime? DateOfBirth { get; set; }
         public string? ImageUrl { get; set; } = string.Empty;
         public string? PublicId { get; set; } = string.Empty;
 

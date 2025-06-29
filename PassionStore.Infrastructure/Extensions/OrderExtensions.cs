@@ -1,7 +1,5 @@
 ﻿using PassionStore.Core.Entities;
 using PassionStore.Core.Enums;
-using System;
-using System.Linq;
 
 namespace PassionStore.Infrastructure.Extensions
 {

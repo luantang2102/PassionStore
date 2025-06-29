@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PassionStore.Infrastructure.Settings
+﻿namespace PassionStore.Infrastructure.Settings
 {
     public class PayOSOption
     {

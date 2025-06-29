@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using PassionStore.Application.DTOs.Ratings;
+﻿using PassionStore.Application.DTOs.Ratings;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
 using PassionStore.Application.Mappers;
@@ -10,10 +8,6 @@ using PassionStore.Core.Enums;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Infrastructure.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PassionStore.Application.Services
 {
@@ -45,6 +39,29 @@ namespace PassionStore.Application.Services
         public async Task<PagedList<RatingResponse>> GetRatingsAsync(RatingParams ratingParams)
         {
             var query = _ratingRepository.GetAllAsync()
+                .Filter(ratingParams.Values, ratingParams.HasComment)
+                .Search(ratingParams.SearchTerm)
+                .Sort(ratingParams.OrderBy);
+
+            var projectedQuery = query.Select(r => r.MapModelToResponse());
+
+            return await PaginationService.ToPagedList(
+                projectedQuery,
+                ratingParams.PageNumber,
+                ratingParams.PageSize
+            );
+        }
+
+        public async Task<PagedList<RatingResponse>> GetRatingsByProductIdAsync(Guid productId, RatingParams ratingParams)
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null)
+            {
+                var attributes = new Dictionary<string, object> { { "productId", productId } };
+                throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
+            }
+
+            var query = _ratingRepository.GetByProductIdAsync(productId)
                 .Filter(ratingParams.Values, ratingParams.HasComment)
                 .Search(ratingParams.SearchTerm)
                 .Sort(ratingParams.OrderBy);

@@ -7,6 +7,7 @@ namespace PassionStore.Application.Interfaces
     public interface IRatingService
     {
         Task<PagedList<RatingResponse>> GetRatingsAsync(RatingParams ratingParams);
+        Task<PagedList<RatingResponse>> GetRatingsByProductIdAsync(Guid productId, RatingParams ratingParams);
         Task<RatingResponse> GetRatingByIdAsync(Guid ratingId, Guid userId);
         Task<RatingResponse> CreateRatingAsync(RatingRequest ratingRequest, Guid userId);
         Task<RatingResponse> UpdateRatingAsync(RatingRequest ratingRequest, Guid ratingId, Guid userId);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PassionStore.Core.Enums
+﻿namespace PassionStore.Core.Enums
 {
     public enum OrderStatus
     {

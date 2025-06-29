@@ -1,14 +1,12 @@
 ﻿using PassionStore.Application.DTOs.Orders;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Paginations;
-using System;
-using System.Threading.Tasks;
 
 namespace PassionStore.Application.Interfaces
 {
     public interface IOrderService
     {
-        Task<PagedList<OrderResponse>> GetOrdersAsync(OrderParams orderParams); 
+        Task<PagedList<OrderResponse>> GetOrdersAsync(OrderParams orderParams);
         Task<OrderResponse> GetOrderByIdAsync(Guid userId, Guid orderId);
         Task<PagedList<OrderResponse>> GetSelfOrdersAsync(Guid userId, OrderParams orderParams);
         Task<OrderResponse> CreateOrderAsync(Guid userId, OrderRequest orderRequest);

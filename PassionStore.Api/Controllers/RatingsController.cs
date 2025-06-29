@@ -6,8 +6,6 @@ using PassionStore.Application.DTOs.Ratings;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
 using PassionStore.Application.Paginations;
-using System;
-using System.Threading.Tasks;
 
 namespace PassionStore.Api.Controllers
 {
@@ -35,6 +33,14 @@ namespace PassionStore.Api.Controllers
             var userId = User.GetUserId();
             var rating = await _ratingService.GetRatingByIdAsync(id, userId);
             return Ok(rating);
+        }
+
+        [HttpGet("product/{productId}")]
+        public async Task<ActionResult<PagedList<RatingResponse>>> GetRatingsByProductId(Guid productId, [FromQuery] RatingParams ratingParams)
+        {
+            var ratings = await _ratingService.GetRatingsByProductIdAsync(productId, ratingParams);
+            Response.AddPaginationHeader(ratings.Metadata);
+            return Ok(ratings);
         }
 
         [HttpPost]

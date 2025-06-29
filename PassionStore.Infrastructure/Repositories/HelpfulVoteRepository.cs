@@ -2,8 +2,6 @@
 using PassionStore.Core.Entities;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Infrastructure.Data;
-using System;
-using System.Threading.Tasks;
 
 namespace PassionStore.Infrastructure.Repositories
 {

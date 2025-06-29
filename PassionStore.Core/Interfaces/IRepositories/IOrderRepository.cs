@@ -1,7 +1,4 @@
 ﻿using PassionStore.Core.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PassionStore.Core.Interfaces.IRepositories
 {

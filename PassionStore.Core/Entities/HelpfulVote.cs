@@ -1,6 +1,5 @@
 ﻿using PassionStore.Core.Models.Auth;
 using PassionStore.Core.Models.Base;
-using System;
 
 namespace PassionStore.Core.Entities
 {

@@ -5,7 +5,6 @@ using PassionStore.Api.Extensions;
 using PassionStore.Application.DTOs.Orders;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
-using PassionStore.Core.Exceptions;
 
 namespace PassionStore.Api.Controllers
 {

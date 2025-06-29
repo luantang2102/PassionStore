@@ -8,7 +8,6 @@ using PassionStore.Application.Paginations;
 using PassionStore.Core.Entities;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
-using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Extensions;
 using PassionStore.Infrastructure.Externals;
 
@@ -128,7 +127,7 @@ namespace PassionStore.Application.Services
 
 
             user.Gender = userRequest.Gender ?? user.Gender;
-            user.DateOfBirth = userRequest.DateOfBirth ?? user.DateOfBirth; 
+            user.DateOfBirth = userRequest.DateOfBirth ?? user.DateOfBirth;
             user.UpdatedDate = DateTime.UtcNow;
 
             await _userRepository.UpdateAsync(user);

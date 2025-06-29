@@ -1,7 +1,5 @@
 ﻿using PassionStore.Application.DTOs.Orders;
 using PassionStore.Core.Entities;
-using PassionStore.Core.Models;
-using PassionStore.Core.Enums;
 
 namespace PassionStore.Application.Mappers
 {

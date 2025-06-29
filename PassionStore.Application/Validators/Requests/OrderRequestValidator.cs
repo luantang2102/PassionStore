@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using PassionStore.Application.DTOs.Orders;
-using PassionStore.Core.Enums;
 
 namespace PassionStore.Application.Validators.Requests
 {

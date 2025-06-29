@@ -46,8 +46,8 @@ namespace PassionStore.Api.Controllers
         }
 
 
-            [HttpGet("me/profiles")]
-            [Authorize]
+        [HttpGet("me/profiles")]
+        [Authorize]
         public async Task<IActionResult> GetMyProfile([FromQuery] UserProfileParams userProfileParams)
         {
             var userId = User.GetUserId();

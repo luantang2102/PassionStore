@@ -1,6 +1,4 @@
 ﻿using PassionStore.Core.Entities;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace PassionStore.Infrastructure.Extensions
 {

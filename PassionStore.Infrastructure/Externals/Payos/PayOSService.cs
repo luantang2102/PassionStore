@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Net.payOS;
+using Newtonsoft.Json;
+using PassionStore.Infrastructure.Externals.Payos.Models;
 using PassionStore.Infrastructure.Settings;
 using System.Net.Http.Headers;
 using System.Text;
-using Net.payOS;
-using PassionStore.Infrastructure.Externals.Payos.Models;
-using Net.payOS.Types;
-using Microsoft.Extensions.Logging;
 
 namespace PassionStore.Infrastructure.Externals.Payos
 {
@@ -111,13 +109,13 @@ namespace PassionStore.Infrastructure.Externals.Payos
 
         public async Task<PayOSInformationResponse?> PaymentCallBack(string code, string id, bool cancel, string status, long orderCode)
         {
-           
+
             if (code.Equals("00"))
             {
                 var paymentInfo = await GetPaymentInfomation(orderCode);
                 if (paymentInfo != null && paymentInfo.Status.Equals("PAID"))
                 {
-                    return paymentInfo; 
+                    return paymentInfo;
                 }
                 else
                 {

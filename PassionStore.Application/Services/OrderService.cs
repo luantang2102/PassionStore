@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Net.payOS.Types;
 using PassionStore.Application.DTOs.Orders;
 using PassionStore.Application.Helpers.Params;
 using PassionStore.Application.Interfaces;
 using PassionStore.Application.Mappers;
 using PassionStore.Application.Paginations;
 using PassionStore.Core.Entities;
+using PassionStore.Core.Enums;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
-using PassionStore.Core.Models;
-using PassionStore.Infrastructure.Externals.Payos;
-using PassionStore.Infrastructure.Externals.Payos.Models;
-using Net.payOS.Types;
 using PassionStore.Infrastructure.Extensions;
+using PassionStore.Infrastructure.Externals.Payos;
 using static PassionStore.Infrastructure.Externals.Payos.PayOSService;
-using PassionStore.Core.Enums;
-using PassionStore.Infrastructure.Repositories;
 
 namespace PassionStore.Application.Services
 {
@@ -28,7 +20,7 @@ namespace PassionStore.Application.Services
         private readonly ICartRepository _cartRepository;
         private readonly IProductVariantRepository _productVariantRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IRatingRepository _ratingRepository; 
+        private readonly IRatingRepository _ratingRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly PayOSService _payOSService;
 

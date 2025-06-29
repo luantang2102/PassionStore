@@ -1,9 +1,4 @@
-﻿using PassionStore.Application.DTOs.Colors;
-using PassionStore.Application.DTOs.Sizes;
-using System;
-using System.Collections.Generic;
-
-namespace PassionStore.Application.DTOs.Orders
+﻿namespace PassionStore.Application.DTOs.Orders
 {
     public class OrderResponse
     {
