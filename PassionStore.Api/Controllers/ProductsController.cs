@@ -32,6 +32,14 @@ namespace PassionStore.Api.Controllers
             return Ok(product);
         }
 
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularProducts([FromQuery] ProductParams productParams)
+        {
+            var products = await _productService.GetPopularProductsAsync(productParams);
+            Response.AddPaginationHeader(products.Metadata);
+            return Ok(products);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([FromForm] ProductRequest productRequest)

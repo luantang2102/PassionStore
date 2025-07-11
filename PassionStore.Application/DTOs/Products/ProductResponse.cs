@@ -14,6 +14,7 @@ namespace PassionStore.Application.DTOs.Products
         public bool InStock { get; set; } = true;
         public int StockQuantity { get; set; } = 0;
         public double AverageRating { get; set; } = 0.0;
+        public int NumberOfRatings { get; set; } = 0;
         public bool IsFeatured { get; set; } = false;
         public bool IsSale { get; set; } = false;
         public bool IsNew { get; set; } = false;

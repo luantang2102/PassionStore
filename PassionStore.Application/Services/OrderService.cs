@@ -42,6 +42,46 @@ namespace PassionStore.Application.Services
             _payOSService = payOSService;
         }
 
+        private readonly Dictionary<PaymentMethod, Dictionary<OrderStatus, List<OrderStatus>>> _validTransitions = new()
+        {
+            {
+                PaymentMethod.PayOS, new Dictionary<OrderStatus, List<OrderStatus>>
+                {
+                    { OrderStatus.PendingPayment, new List<OrderStatus> { OrderStatus.PaymentConfirmed, OrderStatus.PaymentFailed, OrderStatus.Cancelled } },
+                    { OrderStatus.PaymentConfirmed, new List<OrderStatus> { OrderStatus.OrderConfirmed, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.PaymentFailed, new List<OrderStatus> { OrderStatus.PendingPayment, OrderStatus.Cancelled } },
+                    { OrderStatus.OrderConfirmed, new List<OrderStatus> { OrderStatus.Processing, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.Processing, new List<OrderStatus> { OrderStatus.ReadyToShip, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.ReadyToShip, new List<OrderStatus> { OrderStatus.Shipped, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.Shipped, new List<OrderStatus> { OrderStatus.OutForDelivery, OrderStatus.OnHold } },
+                    { OrderStatus.OutForDelivery, new List<OrderStatus> { OrderStatus.Delivered } },
+                    { OrderStatus.Delivered, new List<OrderStatus> { OrderStatus.ReturnRequested, OrderStatus.Completed } },
+                    { OrderStatus.ReturnRequested, new List<OrderStatus> { OrderStatus.Returned, OrderStatus.Completed } },
+                    { OrderStatus.Returned, new List<OrderStatus> { OrderStatus.Refunded, OrderStatus.Completed } },
+                    { OrderStatus.Refunded, new List<OrderStatus> { OrderStatus.Completed } },
+                    { OrderStatus.OnHold, new List<OrderStatus> { OrderStatus.OrderConfirmed } },
+                    { OrderStatus.Cancelled, new List<OrderStatus>() }
+                }
+            },
+            {
+                PaymentMethod.COD, new Dictionary<OrderStatus, List<OrderStatus>>
+                {
+                    { OrderStatus.OrderConfirmed, new List<OrderStatus> { OrderStatus.Processing, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.Processing, new List<OrderStatus> { OrderStatus.ReadyToShip, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.ReadyToShip, new List<OrderStatus> { OrderStatus.Shipped, OrderStatus.OnHold, OrderStatus.Cancelled } },
+                    { OrderStatus.Shipped, new List<OrderStatus> { OrderStatus.OutForDelivery, OrderStatus.OnHold } },
+                    { OrderStatus.OutForDelivery, new List<OrderStatus> { OrderStatus.Delivered } },
+                    { OrderStatus.Delivered, new List<OrderStatus> { OrderStatus.PaymentReceived, OrderStatus.ReturnRequested } },
+                    { OrderStatus.PaymentReceived, new List<OrderStatus> { OrderStatus.Completed } },
+                    { OrderStatus.ReturnRequested, new List<OrderStatus> { OrderStatus.Returned, OrderStatus.Completed } },
+                    { OrderStatus.Returned, new List<OrderStatus> { OrderStatus.Refunded, OrderStatus.Completed } },
+                    { OrderStatus.Refunded, new List<OrderStatus> { OrderStatus.Completed } },
+                    { OrderStatus.OnHold, new List<OrderStatus> { OrderStatus.OrderConfirmed } },
+                    { OrderStatus.Cancelled, new List<OrderStatus>() }
+                }
+            }
+        };
+
         public async Task<PagedList<OrderResponse>> GetOrdersAsync(OrderParams orderParams)
         {
             var query = _orderRepository.GetAllAsync()
@@ -62,20 +102,14 @@ namespace PassionStore.Application.Services
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
-            {
                 throw new AppException(ErrorCode.USER_NOT_FOUND);
-            }
 
             var order = await _orderRepository.GetByIdAsync(orderId);
             if (order == null)
-            {
                 throw new AppException(ErrorCode.ORDER_NOT_FOUND);
-            }
 
             if (!await _userRepository.IsInRoleAsync(user, "Admin") && !order.UserProfile.UserId.Equals(userId))
-            {
                 throw new AppException(ErrorCode.ACCESS_DENIED);
-            }
 
             return order.MapModelToResponse();
         }
@@ -94,15 +128,11 @@ namespace PassionStore.Application.Services
         {
             var userProfile = await _orderRepository.GetUserProfileByUserIdAsync(userId);
             if (userProfile == null)
-            {
                 throw new AppException(ErrorCode.USER_PROFILE_NOT_FOUND);
-            }
 
             var cart = await _cartRepository.GetByUserIdAsync(userId);
             if (cart == null || !cart.CartItems.Any())
-            {
                 throw new AppException(ErrorCode.CART_NOT_FOUND);
-            }
 
             try
             {
@@ -122,7 +152,8 @@ namespace PassionStore.Application.Services
                     Status = orderRequest.PaymentMethod == PaymentMethod.PayOS ? OrderStatus.PendingPayment : OrderStatus.OrderConfirmed,
                     OrderDate = DateTime.UtcNow,
                     TotalAmount = 0,
-                    OrderItems = []
+                    OrderItems = [],
+                    CreatedDate = DateTime.UtcNow
                 };
 
                 decimal totalAmount = 0;
@@ -131,14 +162,10 @@ namespace PassionStore.Application.Services
                 {
                     var productVariant = await _productVariantRepository.GetByIdAsync(cartItem.ProductVariantId);
                     if (productVariant == null)
-                    {
                         throw new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND);
-                    }
 
                     if (productVariant.StockQuantity < cartItem.Quantity)
-                    {
                         throw new AppException(ErrorCode.INSUFFICIENT_STOCK);
-                    }
 
                     var orderItem = new OrderItem
                     {
@@ -160,7 +187,6 @@ namespace PassionStore.Application.Services
                     await _productVariantRepository.UpdateAsync(productVariant);
                 }
 
-                // Add shipping cost to total amount
                 totalAmount += (int)orderRequest.ShippingMethod;
                 order.TotalAmount = totalAmount;
 
@@ -175,7 +201,7 @@ namespace PassionStore.Application.Services
                     try
                     {
                         var payOSRequest = new PayOSRequest(
-                            Amount: (int)totalAmount, // Include shipping cost
+                            Amount: (int)totalAmount,
                             Description: $"{orderRequest.Note}",
                             OrderCode: (int)(DateTime.UtcNow.Ticks % 1000000),
                             Items: payOSItems
@@ -185,17 +211,26 @@ namespace PassionStore.Application.Services
 
                         order.PaymentLink = payOSResponse.CheckoutUrl;
                         order.PaymentTransactionId = payOSResponse.OrderCode.ToString();
-                        order.Status = OrderStatus.PendingPayment; // Explicitly set for clarity
                         await _orderRepository.UpdateAsync(order);
                     }
                     catch (PayOSException)
                     {
+                        // Rollback stock changes
+                        foreach (var orderItem in order.OrderItems)
+                        {
+                            var productVariant = await _productVariantRepository.GetByIdAsync(orderItem.ProductVariantId);
+                            if (productVariant != null)
+                            {
+                                productVariant.StockQuantity += orderItem.Quantity;
+                                await _productVariantRepository.UpdateAsync(productVariant);
+                            }
+                        }
+                        await _unitOfWork.CommitAsync();
                         throw new AppException(ErrorCode.PAYMENT_CREATION_FAILED);
                     }
                 }
 
                 await _unitOfWork.CommitAsync();
-
                 return order.MapModelToResponse();
             }
             catch (Exception)
@@ -210,15 +245,10 @@ namespace PassionStore.Application.Services
             {
                 var order = await _orderRepository.GetByIdAsync(orderId);
                 if (order == null)
-                {
                     throw new AppException(ErrorCode.ORDER_NOT_FOUND);
-                }
 
-                // Validate status transition
-                if (!IsValidStatusTransition(order.Status, orderStatusRequest.Status))
-                {
+                if (!IsValidStatusTransition(order, orderStatusRequest.Status))
                     throw new AppException(ErrorCode.INVALID_STATUS_TRANSITION);
-                }
 
                 order.Status = orderStatusRequest.Status;
                 order.UpdatedDate = DateTime.UtcNow;
@@ -234,28 +264,80 @@ namespace PassionStore.Application.Services
             }
         }
 
+        public async Task<OrderResponse> RequestReturnAsync(Guid userId, Guid orderId, ReturnRequest returnRequest)
+        {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null || !order.UserProfile.UserId.Equals(userId))
+                throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+
+            if (order.Status != OrderStatus.Delivered)
+                throw new AppException(ErrorCode.ORDER_NOT_RETURNABLE);
+
+            if (!IsValidStatusTransition(order, OrderStatus.ReturnRequested))
+                throw new AppException(ErrorCode.INVALID_STATUS_TRANSITION);
+
+            order.Status = OrderStatus.ReturnRequested;
+            order.ReturnReason = returnRequest.Reason;
+            order.UpdatedDate = DateTime.UtcNow;
+
+            await _orderRepository.UpdateAsync(order);
+            await _unitOfWork.CommitAsync();
+
+            return order.MapModelToResponse();
+        }
+
+        public async Task<OrderResponse> UpdateReturnStatusAsync(Guid orderId, ReturnStatusRequest returnStatusRequest)
+        {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+                throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+
+            if (!IsValidStatusTransition(order, returnStatusRequest.Status))
+                throw new AppException(ErrorCode.INVALID_STATUS_TRANSITION);
+
+            order.Status = returnStatusRequest.Status;
+            order.UpdatedDate = DateTime.UtcNow;
+
+            if (returnStatusRequest.Status == OrderStatus.Returned)
+            {
+                foreach (var orderItem in order.OrderItems)
+                {
+                    var productVariant = await _productVariantRepository.GetByIdAsync(orderItem.ProductVariantId);
+                    if (productVariant != null)
+                    {
+                        productVariant.StockQuantity += orderItem.Quantity;
+                        await _productVariantRepository.UpdateAsync(productVariant);
+                    }
+                }
+            }
+
+            if (returnStatusRequest.Status == OrderStatus.Refunded)
+            {
+                order.ReturnReason = returnStatusRequest.RefundReason ?? order.ReturnReason;
+            }
+
+            await _orderRepository.UpdateAsync(order);
+            await _unitOfWork.CommitAsync();
+
+            return order.MapModelToResponse();
+        }
+
         public async Task CancelOrderAsync(Guid userId, Guid orderId, string? cancellationReason, bool callBack = false)
         {
             try
             {
                 var order = await _orderRepository.GetByIdAsync(orderId);
                 if (order == null || !order.UserProfile.UserId.Equals(userId))
-                {
                     throw new AppException(ErrorCode.ORDER_NOT_FOUND);
-                }
 
-                if (order.Status != OrderStatus.PendingPayment && order.Status != OrderStatus.OrderConfirmed)
-                {
+                if (!IsValidStatusTransition(order, OrderStatus.Cancelled))
                     throw new AppException(ErrorCode.ORDER_NOT_CANCELLABLE);
-                }
 
                 foreach (var orderItem in order.OrderItems)
                 {
                     var productVariant = await _productVariantRepository.GetByIdAsync(orderItem.ProductVariantId);
                     if (productVariant == null)
-                    {
                         throw new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND);
-                    }
 
                     productVariant.StockQuantity += orderItem.Quantity;
                     await _productVariantRepository.UpdateAsync(productVariant);
@@ -264,9 +346,7 @@ namespace PassionStore.Application.Services
                 if (!callBack && order.PaymentMethod == PaymentMethod.PayOS && !string.IsNullOrEmpty(order.PaymentTransactionId))
                 {
                     if (!long.TryParse(order.PaymentTransactionId, out var orderCode))
-                    {
                         throw new AppException(ErrorCode.PAYMENT_CANCELLATION_FAILED);
-                    }
 
                     try
                     {
@@ -288,6 +368,7 @@ namespace PassionStore.Application.Services
                 }
 
                 order.Status = OrderStatus.Cancelled;
+                order.UpdatedDate = DateTime.UtcNow;
                 await _orderRepository.UpdateAsync(order);
                 await _unitOfWork.CommitAsync();
             }
@@ -302,34 +383,30 @@ namespace PassionStore.Application.Services
             try
             {
                 var paymentInfo = await _payOSService.PaymentCallBack(code, id, cancel, status, orderCode);
-                if (paymentInfo != null)
+                if (paymentInfo == null)
+                    return null;
+
+                var order = await _orderRepository.GetByPaymentTransactionIdAsync(paymentInfo.OrderCode.ToString());
+                if (order == null)
+                    throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+
+                var orderStatusRequest = new OrderStatusRequest
                 {
-                    var order = await _orderRepository.GetByPaymentTransactionIdAsync(paymentInfo.OrderCode.ToString());
-                    if (order == null)
+                    Status = paymentInfo.Status switch
                     {
-                        throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+                        "PAID" => OrderStatus.PaymentConfirmed,
+                        "CANCELLED" => OrderStatus.Cancelled,
+                        _ => OrderStatus.PaymentFailed
                     }
+                };
 
-                    var orderStatusRequest = new OrderStatusRequest
-                    {
-                        Status = paymentInfo.Status == "PAID" ? OrderStatus.PaymentConfirmed : OrderStatus.PaymentFailed
-                    };
-                    return await UpdateOrderStatusAsync(order.Id, orderStatusRequest);
-                }
-
-                if (cancel && status == "CANCELLED" && !string.IsNullOrEmpty(orderCode.ToString()))
+                if (orderStatusRequest.Status == OrderStatus.Cancelled)
                 {
-                    var order = await _orderRepository.GetByPaymentTransactionIdAsync(orderCode.ToString());
-                    if (order == null)
-                    {
-                        throw new AppException(ErrorCode.ORDER_NOT_FOUND);
-                    }
-
                     await CancelOrderAsync(order.UserProfile.UserId, order.Id, "Cancelled via PayOS callback", true);
                     return null;
                 }
 
-                return null;
+                return await UpdateOrderStatusAsync(order.Id, orderStatusRequest);
             }
             catch (Exception)
             {
@@ -337,40 +414,12 @@ namespace PassionStore.Application.Services
             }
         }
 
-        private bool IsValidStatusTransition(OrderStatus currentStatus, OrderStatus newStatus)
+        private bool IsValidStatusTransition(Order order, OrderStatus newStatus)
         {
-            return (currentStatus, newStatus) switch
-            {
-                (OrderStatus.PendingPayment, OrderStatus.PaymentConfirmed) => true,
-                (OrderStatus.PendingPayment, OrderStatus.PaymentFailed) => true,
-                (OrderStatus.PendingPayment, OrderStatus.OrderConfirmed) => true,
-                (OrderStatus.PendingPayment, OrderStatus.OnHold) => true,
-                (OrderStatus.PendingPayment, OrderStatus.Cancelled) => true,
-                (OrderStatus.PaymentConfirmed, OrderStatus.OrderConfirmed) => true,
-                (OrderStatus.PaymentConfirmed, OrderStatus.OnHold) => true,
-                (OrderStatus.PaymentConfirmed, OrderStatus.Cancelled) => true,
-                (OrderStatus.OrderConfirmed, OrderStatus.Processing) => true,
-                (OrderStatus.OrderConfirmed, OrderStatus.OnHold) => true,
-                (OrderStatus.OrderConfirmed, OrderStatus.Cancelled) => true,
-                (OrderStatus.Processing, OrderStatus.ReadyToShip) => true,
-                (OrderStatus.Processing, OrderStatus.OnHold) => true,
-                (OrderStatus.Processing, OrderStatus.Cancelled) => true,
-                (OrderStatus.ReadyToShip, OrderStatus.Shipped) => true,
-                (OrderStatus.ReadyToShip, OrderStatus.OnHold) => true,
-                (OrderStatus.ReadyToShip, OrderStatus.Cancelled) => true,
-                (OrderStatus.Shipped, OrderStatus.OutForDelivery) => true,
-                (OrderStatus.Shipped, OrderStatus.OnHold) => true,
-                (OrderStatus.OutForDelivery, OrderStatus.Delivered) => true,
-                (OrderStatus.OutForDelivery, OrderStatus.Returned) => true,
-                (OrderStatus.Delivered, OrderStatus.PaymentReceived) => true,
-                (OrderStatus.Delivered, OrderStatus.Returned) => true,
-                (OrderStatus.PaymentReceived, OrderStatus.Completed) => true,
-                (OrderStatus.Returned, OrderStatus.Refunded) => true,
-                (OrderStatus.Returned, OrderStatus.Completed) => true,
-                _ => false
-            };
+            var paymentMethod = order.PaymentMethod;
+            if (!_validTransitions.TryGetValue(paymentMethod, out var transitions))
+                return false;
+            return transitions.TryGetValue(order.Status, out var validStatuses) && validStatuses.Contains(newStatus);
         }
-
     }
-
 }

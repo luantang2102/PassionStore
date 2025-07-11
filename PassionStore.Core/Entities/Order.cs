@@ -13,6 +13,7 @@ namespace PassionStore.Core.Entities
         public PaymentMethod PaymentMethod { get; set; }
         public string? PaymentLink { get; set; } // PayOS payment link
         public string? PaymentTransactionId { get; set; } // PayOS transaction ID
+        public string? ReturnReason { get; set; }
         public string Note { get; set; } = string.Empty;
 
         // Foreign key

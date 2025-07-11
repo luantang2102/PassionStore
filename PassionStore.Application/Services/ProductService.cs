@@ -5,6 +5,7 @@ using PassionStore.Application.Mappers;
 using PassionStore.Application.Paginations;
 using PassionStore.Core.Entities;
 using PassionStore.Core.Entities.Constants;
+using PassionStore.Core.Enums;
 using PassionStore.Core.Exceptions;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
@@ -17,7 +18,6 @@ namespace PassionStore.Application.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly IProductVariantRepository _productVariantRepository;
-        private readonly ICartRepository _cartRepository;
         private readonly IBrandRepository _brandRepository;
         private readonly CloudinaryService _cloudinaryService;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,14 +25,12 @@ namespace PassionStore.Application.Services
         public ProductService(
             IProductRepository productRepository,
             IProductVariantRepository productVariantRepository,
-            ICartRepository cartRepository,
             IBrandRepository brandRepository,
             CloudinaryService cloudinaryService,
             IUnitOfWork unitOfWork)
         {
             _productRepository = productRepository;
             _productVariantRepository = productVariantRepository;
-            _cartRepository = cartRepository;
             _brandRepository = brandRepository;
             _cloudinaryService = cloudinaryService;
             _unitOfWork = unitOfWork;
@@ -53,6 +51,22 @@ namespace PassionStore.Application.Services
         public Task<PagedList<ProductResponse>> GetProductsAsync(ProductParams productParams)
         {
             var query = _productRepository.GetAllAsync()
+                .Sort(productParams.OrderBy)
+                .Search(productParams.SearchTerm)
+                .Filter(productParams.Categories, productParams.Ratings, productParams.MinPrice, productParams.MaxPrice, productParams.IsFeatured);
+
+            var projectedQuery = query.Select(x => x.MapModelToResponse());
+
+            return PaginationService.ToPagedList(
+                projectedQuery,
+                productParams.PageNumber,
+                productParams.PageSize
+            );
+        }
+
+        public Task<PagedList<ProductResponse>> GetPopularProductsAsync(ProductParams productParams)
+        {
+            var query = _productRepository.GetPopularProductsAsync()
                 .Sort(productParams.OrderBy)
                 .Search(productParams.SearchTerm)
                 .Filter(productParams.Categories, productParams.Ratings, productParams.MinPrice, productParams.MaxPrice, productParams.IsFeatured);
@@ -144,7 +158,6 @@ namespace PassionStore.Application.Services
                 };
                 product.ProductVariants.Add(defaultVariant);
             }
-            // Else, variants will be created via ProductVariantService separately
 
             var createdProduct = await _productRepository.CreateAsync(product);
             await _unitOfWork.CommitAsync();

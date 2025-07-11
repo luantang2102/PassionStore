@@ -76,10 +76,12 @@ namespace PassionStore.Core.Exceptions
         public static readonly ErrorCode ORDER_NOT_FOUND = new(1100, "Order not found", StatusCodes.Status404NotFound);
         public static readonly ErrorCode ORDER_NOT_CANCELLABLE = new(1101, "Order cannot be cancelled", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode INVALID_STATUS_TRANSITION = new(1102, "Invalid status transition", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode ORDER_NOT_RETURNABLE = new(1103, "Order cannot be returned", StatusCodes.Status400BadRequest);
 
         // Payment related errors (1200-1299)
         public static readonly ErrorCode PAYMENT_CREATION_FAILED = new(1200, "Payment creation failed", StatusCodes.Status400BadRequest);
         public static readonly ErrorCode PAYMENT_CANCELLATION_FAILED = new(1201, "Payment cancellation failed", StatusCodes.Status400BadRequest);
+        public static readonly ErrorCode PAYMENT_REFUND_FAILED = new(1202, "Payment refund failed", StatusCodes.Status400BadRequest);
 
         // Product variant related errors (1300-1399)
         public static readonly ErrorCode PRODUCT_VARIANT_NOT_FOUND = new(1300, "Product variant not found", StatusCodes.Status404NotFound);
@@ -106,6 +108,12 @@ namespace PassionStore.Core.Exceptions
 
         // Images related errors (1800-1899)
         public static readonly ErrorCode INVALID_MAIN_IMAGE_COUNT = new(1800, "Invalid main image count", StatusCodes.Status400BadRequest);
+
+        // Chat and message related errors (1900-1999)
+        public static readonly ErrorCode CHAT_NOT_FOUND = new(1900, "Chat not found", StatusCodes.Status404NotFound);
+
+        // Notification related errors (2000-2099)
+        public static readonly ErrorCode NOTIFICATION_NOT_FOUND = new(2000, "Notification not found", StatusCodes.Status404NotFound);
 
         /// <summary>
         /// Atributes for error code, message, and status. 

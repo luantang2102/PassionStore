@@ -41,7 +41,7 @@ namespace PassionStore.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateColor([FromBody] ColorRequest colorRequest)
+        public async Task<IActionResult> CreateColor([FromForm] ColorRequest colorRequest)
         {
             var createdColor = await _colorService.CreateColorAsync(colorRequest);
             return CreatedAtAction(nameof(GetColorById), new { id = createdColor.Id }, createdColor);
@@ -49,7 +49,7 @@ namespace PassionStore.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateColor(Guid id, [FromBody] ColorRequest colorRequest)
+        public async Task<IActionResult> UpdateColor(Guid id, [FromForm] ColorRequest colorRequest)
         {
             var updatedColor = await _colorService.UpdateColorAsync(id, colorRequest);
             return Ok(updatedColor);

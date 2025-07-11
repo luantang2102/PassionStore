@@ -60,5 +60,13 @@ namespace PassionStore.Infrastructure.Repositories
             return await _context.Ratings
                 .AnyAsync(x => x.UserId == userId && x.ProductId == productId);
         }
+
+        public async Task<Rating?> GetUserRatingForProductAsync(Guid userId, Guid productId)
+        {
+            return await _context.Ratings
+                .Include(x => x.Product)
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId);
+        }
     }
 }

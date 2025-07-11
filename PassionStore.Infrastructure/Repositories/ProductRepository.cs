@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PassionStore.Core.Entities;
+using PassionStore.Core.Enums;
 using PassionStore.Core.Interfaces.IRepositories;
 using PassionStore.Core.Models;
 using PassionStore.Infrastructure.Data;
@@ -40,6 +41,33 @@ namespace PassionStore.Infrastructure.Repositories
                 .ThenInclude(x => x.Color)
                 .Include(x => x.ProductVariants)
                 .ThenInclude(x => x.Size);
+        }
+
+        public IQueryable<Product> GetPopularProductsAsync()
+        {
+            return _context.Products
+                .Include(x => x.Categories)
+                .Include(x => x.Ratings)
+                .Include(x => x.ProductImages)
+                .Include(x => x.Brand)
+                .Include(x => x.ProductVariants)
+                .ThenInclude(x => x.Color)
+                .Include(x => x.ProductVariants)
+                .ThenInclude(x => x.Size)
+                .GroupJoin(
+                    _context.Orders
+                        .Where(o => o.Status == OrderStatus.Completed)
+                        .SelectMany(o => o.OrderItems),
+                    product => product.Id,
+                    orderItem => orderItem.ProductVariant.ProductId,
+                    (product, orderItems) => new
+                    {
+                        Product = product,
+                        TotalOrdered = orderItems.Sum(oi => oi.Quantity)
+                    })
+                .OrderByDescending(x => x.TotalOrdered)
+                .Take(30)
+                .Select(x => x.Product);
         }
 
         public IQueryable<Product> GetByCategoryIdAsync(Guid categoryId)

@@ -4,11 +4,12 @@ using PassionStore.Api.Extensions;
 using PassionStore.Api.Filters;
 using PassionStore.Api.SeedData;
 using PassionStore.Application.Validators.Requests;
+using PassionStore.Application.Hubs; // Ensure the namespace for ChatHub is included
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-/// Add services to the container.
+// Add services to the container.
 
 // Add Swagger
 builder.Services.AddCustomSwagger();
@@ -18,6 +19,9 @@ builder.Services.AddInfrastructure(configuration);
 
 // Add Services
 builder.Services.AddApplication(configuration);
+
+// Add SignalR services
+builder.Services.AddSignalR();
 
 // Disable automatic model state error response
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -50,10 +54,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddGlobalExceptionHandling();
 builder.Services.AddCustomJwtAuthentication(configuration);
 
-
-
-
-/// App configuration
+// App configuration
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -79,6 +80,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chatHub"); // Map the SignalR hub endpoint
 
 await DbInitializer.InitDb(app);
 

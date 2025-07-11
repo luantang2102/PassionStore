@@ -81,11 +81,11 @@ namespace PassionStore.Api.Controllers
 
         [HttpGet("has-rated/{productId}")]
         [Authorize]
-        public async Task<ActionResult<bool>> HasRatedProduct(Guid productId)
+        public async Task<ActionResult<RatingResponse?>> GetUserRatingForProduct(Guid productId)
         {
             var userId = User.GetUserId();
-            var hasRated = await _ratingService.HasRatedAsync(userId, productId);
-            return Ok(hasRated);
+            var rating = await _ratingService.GetUserRatingForProductAsync(userId, productId);
+            return Ok(rating);
         }
     }
 }

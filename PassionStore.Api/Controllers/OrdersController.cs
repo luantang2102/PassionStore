@@ -26,7 +26,6 @@ namespace PassionStore.Api.Controllers
             return Ok(orders);
         }
 
-
         [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetSelfOrders([FromQuery] OrderParams orderParams)
@@ -36,7 +35,6 @@ namespace PassionStore.Api.Controllers
             Response.AddPaginationHeader(orders.Metadata);
             return Ok(orders);
         }
-
 
         [HttpGet("{id}")]
         [Authorize]
@@ -64,6 +62,23 @@ namespace PassionStore.Api.Controllers
             return Ok(updatedOrder);
         }
 
+        [HttpPost("{id}/return")]
+        [Authorize]
+        public async Task<IActionResult> RequestReturn(Guid id, [FromForm] ReturnRequest returnRequest)
+        {
+            var userId = User.GetUserId();
+            var order = await _orderService.RequestReturnAsync(userId, id, returnRequest);
+            return Ok(order);
+        }
+
+        [HttpPut("{id}/return/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateReturnStatus(Guid id, [FromForm] ReturnStatusRequest returnStatusRequest)
+        {
+            var order = await _orderService.UpdateReturnStatusAsync(id, returnStatusRequest);
+            return Ok(order);
+        }
+
         [HttpDelete("{id}/cancel")]
         [Authorize]
         public async Task<IActionResult> CancelOrder(Guid id, string? cancellationReason)
@@ -74,17 +89,17 @@ namespace PassionStore.Api.Controllers
         }
 
         [HttpGet("payment-callback")]
-        [Authorize]
-        public async Task<IActionResult> HandlePaymentCallback([FromQuery] string code, [FromQuery] string id, [FromQuery] bool cancel, [FromQuery] string status, [FromQuery] long orderCode)
+        public async Task<IActionResult> HandlePaymentCallback(
+            [FromQuery] string code,
+            [FromQuery] string id,
+            [FromQuery] bool cancel,
+            [FromQuery] string status,
+            [FromQuery] long orderCode)
         {
-
             var orderResponse = await _orderService.HandlePaymentCallbackAsync(code, id, cancel, status, orderCode);
             if (orderResponse != null)
-            {
                 return Ok(orderResponse);
-            }
             return NoContent();
-
         }
     }
 }

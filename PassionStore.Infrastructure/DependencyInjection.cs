@@ -52,6 +52,9 @@ public static class DependencyInjection
         services.AddScoped<IColorRepository, ColorRepository>();
         services.AddScoped<ISizeRepository, SizeRepository>();
         services.AddScoped<IBrandRepository, BrandRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
 
         var emailOption = new EmailOption();
         configuration.GetSection("InfrastructureSettings:EmailOption").Bind(emailOption);

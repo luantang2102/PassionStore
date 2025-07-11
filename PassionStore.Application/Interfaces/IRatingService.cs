@@ -13,6 +13,6 @@ namespace PassionStore.Application.Interfaces
         Task<RatingResponse> UpdateRatingAsync(RatingRequest ratingRequest, Guid ratingId, Guid userId);
         Task DeleteRatingAsync(Guid ratingId, Guid userId);
         Task ToggleHelpfulAsync(Guid ratingId, Guid userId);
-        Task<bool> HasRatedAsync(Guid userId, Guid productId);
+        Task<RatingResponse?> GetUserRatingForProductAsync(Guid userId, Guid productId);
     }
 }

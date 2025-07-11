@@ -20,6 +20,7 @@ namespace PassionStore.Application.Mappers
                 Description = product.Description,
                 InStock = product.InStock,
                 AverageRating = averageRating,
+                NumberOfRatings = product.Ratings.Count,
                 IsFeatured = product.IsFeatured,
                 ProductImages = product.ProductImages.Select(pi => pi.MapModelToResponse()).OrderBy(pi => pi.Order).ToList(),
                 Categories = product.Categories.Select(c => c.MapModelToResponse()).ToList(),

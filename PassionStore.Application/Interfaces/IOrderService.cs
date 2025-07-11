@@ -13,5 +13,7 @@ namespace PassionStore.Application.Interfaces
         Task<OrderResponse> UpdateOrderStatusAsync(Guid orderId, OrderStatusRequest orderStatusRequest);
         Task CancelOrderAsync(Guid userId, Guid orderId, string? cancellationReason, bool callBack = false);
         Task<OrderResponse?> HandlePaymentCallbackAsync(string code, string id, bool cancel, string status, long orderCode);
+        Task<OrderResponse> RequestReturnAsync(Guid userId, Guid orderId, ReturnRequest returnRequest);
+        Task<OrderResponse> UpdateReturnStatusAsync(Guid orderId, ReturnStatusRequest returnStatusRequest);
     }
 }

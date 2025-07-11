@@ -34,6 +34,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

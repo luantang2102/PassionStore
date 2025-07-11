@@ -1,4 +1,6 @@
-﻿namespace PassionStore.Application.DTOs.Orders
+﻿using PassionStore.Application.DTOs.UserProfiles;
+
+namespace PassionStore.Application.DTOs.Orders
 {
     public class OrderResponse
     {
@@ -11,7 +13,8 @@
         public string ShippingMethod { get; set; } = null!;
         public string? PaymentLink { get; set; }
         public string? PaymentTransactionId { get; set; }
-        public Guid UserProfileId { get; set; }
+        public string? ReturnReason { get; set; }
+        public UserProfileResponse UserProfile { get; set; } = null!;
         public string UserFullName { get; set; } = null!;
         public string ShippingAddress { get; set; } = null!;
         public string Note { get; set; } = null!;

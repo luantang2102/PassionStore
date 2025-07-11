@@ -2,20 +2,21 @@
 {
     public enum OrderStatus
     {
-        PendingPayment = 0,
+        PendingPayment,
         PaymentConfirmed,
+        PaymentFailed,
         OrderConfirmed,
         Processing,
         ReadyToShip,
         Shipped,
         OutForDelivery,
         Delivered,
-        PaymentReceived,
-        Completed,
-        PaymentFailed,
-        OnHold,
-        Cancelled,
+        PaymentReceived, // For COD
+        ReturnRequested,
         Returned,
-        Refunded
+        Refunded,
+        Completed,
+        OnHold,
+        Cancelled
     }
 }

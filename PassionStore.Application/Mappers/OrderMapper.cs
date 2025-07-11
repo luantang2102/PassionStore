@@ -18,10 +18,11 @@ namespace PassionStore.Application.Mappers
                 ShippingMethod = order.ShippingMethod.ToString(),
                 PaymentLink = order.PaymentLink,
                 PaymentTransactionId = order.PaymentTransactionId,
-                UserProfileId = order.UserProfileId,
+                UserProfile = order.UserProfile.MapModelToResponse(),
                 UserFullName = order.UserProfile?.FullName ?? string.Empty,
                 ShippingAddress = order.ShippingAddress,
                 Note = order.Note,
+                ReturnReason = order.ReturnReason,
                 OrderItems = order.OrderItems.Select(i => i.MapModelToResponse()).ToList(),
                 CreatedDate = order.CreatedDate,
                 UpdatedDate = order.UpdatedDate

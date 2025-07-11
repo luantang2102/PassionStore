@@ -181,7 +181,7 @@ namespace PassionStore.Application.Services
             var product = await _productRepository.GetByIdAsync(ratingRequest.ProductId);
             if (product == null)
             {
-                var attributes = new Dictionary<string, object> { { "productId ratingId", ratingId } };
+                var attributes = new Dictionary<string, object> { { "productId", ratingRequest.ProductId } };
                 throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
             }
 
@@ -255,11 +255,10 @@ namespace PassionStore.Application.Services
             }
 
             await _ratingRepository.UpdateAsync(rating);
-
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<bool> HasRatedAsync(Guid userId, Guid productId)
+        public async Task<RatingResponse?> GetUserRatingForProductAsync(Guid userId, Guid productId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
@@ -274,7 +273,8 @@ namespace PassionStore.Application.Services
                 throw new AppException(ErrorCode.PRODUCT_NOT_FOUND, attributes);
             }
 
-            return await _ratingRepository.HasRatedAsync(userId, productId);
+            var rating = await _ratingRepository.GetUserRatingForProductAsync(userId, productId);
+            return rating?.MapModelToResponse();
         }
     }
 }

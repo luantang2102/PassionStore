@@ -15,5 +15,6 @@ namespace PassionStore.Core.Interfaces.IRepositories
         Task UpdateAsync(Product product);
         Task DeleteAsync(Product product);
         Task<bool> HasBrandAsync(Guid brandId);
+        IQueryable<Product> GetPopularProductsAsync();
     }
 }
